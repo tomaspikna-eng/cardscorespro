@@ -489,14 +489,14 @@ button,input,select{font:inherit}
 
   <div class="nav-wrap">
     <nav class="nav">
-      <a href="#" aria-label="Domov">🏠</a>
-      <a href="#">Biliard</a>
-      <a href="#">Šípky</a>
-      <a href="#">Bowling</a>
-      <a href="#">Karty</a>
-      <a href="#" class="search-btn">Hľadať</a>
-      <a href="#">Prihlásiť</a>
-      <a href="#" class="primary">Registrovať</a>
+      <a href="/">🏠</a>
+      <a href="/login/">Biliard</a>
+      <a href="/login/">Šípky</a>
+      <a href="/login/">Bowling</a>
+      <a href="/login/">Karty</a>
+      <a href="/search/" class="search-btn">Hľadať</a>
+      <a href="/login/">Prihlásiť</a>
+      <a href="/login/" class="primary">Registrovať</a>
     </nav>
 
     <div class="lang">
@@ -513,16 +513,16 @@ button,input,select{font:inherit}
   <div class="hero-copy">
     <div class="kicker">Turnajový manažér</div>
     <h1>Turnaje, hráči a kluby na jednom mieste</h1>
-    <p>Cardscorespro tvoj smart system na jednom mieste</p>
+    <p>CardScoresPro spája kalendár udalostí, priebeh turnaja, tréning a profil hráča do jedného prehľadného priestoru.</p>
     <div class="hero-actions">
-      <button class="btn btn-green">Registrovať</button>
-      <button class="btn btn-dark">Prihlásiť</button>
+      <a href="/login/" class="btn btn-green" style="display:inline-flex;align-items:center;">Registrovať</a>
+      <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Prihlásiť</a>
     </div>
     <div class="chips">
-      <span class="chip">Biliard</span>
-      <span class="chip">Šípky</span>
-      <span class="chip">Bowling</span>
-      <span class="chip">Karty</span>
+      <a href="/login/" class="chip">Biliard</a>
+      <a href="/login/" class="chip">Šípky</a>
+      <a href="/login/" class="chip">Bowling</a>
+      <a href="/login/" class="chip">Karty</a>
     </div>
   </div>
 
@@ -560,10 +560,73 @@ button,input,select{font:inherit}
 <section class="panel section">
   <div class="section-head">
     <div>
+      <h2 class="section-title">Pre koho je CSP</h2>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="info-card">
+      <h3>Hráč</h3>
+      <p>Profil, tréning, prehľad turnajov a výsledkov v jednom účte.</p>
+      <div class="mini-stat">Rýchly prístup k vlastnému prehľadu</div>
+    </div>
+
+    <div class="info-card">
+      <h3>Organizátor</h3>
+      <p>Vytvorenie turnaja, správa hráčov, štruktúr a priebehu podujatia.</p>
+      <div class="mini-stat">Jednoduchšie riadenie turnaja</div>
+    </div>
+
+    <div class="info-card">
+      <h3>Klub / podnik</h3>
+      <p>Prezentácia turnajov a viditeľnosť udalostí na jednom mieste pre hráčov.</p>
+      <div class="mini-stat">Silnejšia viditeľnosť podujatí</div>
+    </div>
+  </div>
+</section>
+
+<section class="panel section">
+  <div class="section-head">
+    <div>
+      <h2 class="section-title">Preview systému</h2>
+      <p>Ukážka hlavných blokov, ktoré tvoria základ aplikácie.</p>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="feature-card">
+      <h3>Profil používateľa</h3>
+      <p>Hráčska identita, výsledky, aktívne turnaje a história.</p>
+      <div class="mini-stat">Osobný prehľad hráča</div>
+    </div>
+
+    <div class="feature-card">
+      <h3>Nastavenie turnaja</h3>
+      <p>Výber športu, disciplíny, štruktúry, veľkosti poľa a seedovania.</p>
+      <div class="mini-stat">Príprava pred štartom</div>
+    </div>
+
+    <div class="feature-card">
+      <h3>Priebeh turnaja</h3>
+      <p>Zápasy, live stav, pavúk a priebežný zápis výsledkov.</p>
+      <div class="mini-stat">Prehľad turnaja v reálnom čase</div>
+    </div>
+
+    <div class="feature-card">
+      <h3>Tréning</h3>
+      <p>Samostatné režimy tréningu podľa športu s dôrazom na jednoduché ovládanie.</p>
+      <div class="mini-stat">Tréningové režimy</div>
+    </div>
+  </div>
+</section>
+
+<section class="panel section">
+  <div class="section-head">
+    <div>
       <h2 class="section-title">Kalendár turnajov</h2>
       <p>Vyhľadávanie má byť hlavný tromf tejto sekcie pre hráča aj klub.</p>
     </div>
-    <button class="btn btn-dark">Zobraziť všetky turnaje</button>
+    <a href="/search/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Zobraziť všetky turnaje</a>
   </div>
 
   <div class="search-layout">
@@ -610,7 +673,7 @@ button,input,select{font:inherit}
               <div>Organizátor: Moment Club</div>
             </div>
             <div class="mini-actions">
-              <button class="btn btn-dark">Detail udalosti</button>
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
             </div>
           </div>
 
@@ -624,7 +687,7 @@ button,input,select{font:inherit}
               <div>Organizátor: Klub Darts</div>
             </div>
             <div class="mini-actions">
-              <button class="btn btn-dark">Detail udalosti</button>
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
             </div>
           </div>
         </div>
@@ -642,7 +705,7 @@ button,input,select{font:inherit}
               <div>Disciplína: 8-Ball</div>
             </div>
             <div class="mini-actions">
-              <button class="btn btn-dark">Detail udalosti</button>
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
             </div>
           </div>
 
@@ -656,7 +719,7 @@ button,input,select{font:inherit}
               <div>Disciplína: 9-Ball</div>
             </div>
             <div class="mini-actions">
-              <button class="btn btn-dark">Detail udalosti</button>
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
             </div>
           </div>
         </div>
@@ -674,7 +737,7 @@ button,input,select{font:inherit}
               <div>Organizátor: Bowling Hall</div>
             </div>
             <div class="mini-actions">
-              <button class="btn btn-dark">Detail udalosti</button>
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
             </div>
           </div>
 
@@ -688,7 +751,7 @@ button,input,select{font:inherit}
               <div>Organizátor: Arena Bowling</div>
             </div>
             <div class="mini-actions">
-              <button class="btn btn-dark">Detail udalosti</button>
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
             </div>
           </div>
         </div>
@@ -706,7 +769,7 @@ button,input,select{font:inherit}
               <div>Organizátor: Klub kariet</div>
             </div>
             <div class="mini-actions">
-              <button class="btn btn-dark">Detail udalosti</button>
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
             </div>
           </div>
 
@@ -720,7 +783,7 @@ button,input,select{font:inherit}
               <div>Organizátor: Lokálny podnik</div>
             </div>
             <div class="mini-actions">
-              <button class="btn btn-dark">Detail udalosti</button>
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
             </div>
           </div>
         </div>
@@ -728,37 +791,6 @@ button,input,select{font:inherit}
     </div>
   </div>
 </section>
-
-<section class="panel section">
-  <div class="section-head">
-    <div>
-      <h2 class="section-title">Pre koho je CSP</h2>
-    </div>
-  </div>
-
-  <div class="grid-3">
-    <div class="info-card">
-      <h3>Hráč</h3>
-      <p>Profil, tréning, prehľad turnajov a výsledkov v jednom účte.</p>
-      <div class="mini-stat">Rýchly prístup k vlastnému prehľadu</div>
-    </div>
-
-    <div class="info-card">
-      <h3>Organizátor</h3>
-      <p>Vytvorenie turnaja, správa hráčov, štruktúr a priebehu podujatia.</p>
-      <div class="mini-stat">Jednoduchšie riadenie turnaja</div>
-    </div>
-
-    <div class="info-card">
-      <h3>Klub / podnik</h3>
-      <p>Prezentácia turnajov a viditeľnosť udalostí na jednom mieste pre hráčov.</p>
-      <div class="mini-stat">Silnejšia viditeľnosť podujatí</div>
-    </div>
-  </div>
-</section>
-
-
-
 
 <section class="panel section">
   <div class="section-head">
@@ -780,7 +812,7 @@ button,input,select{font:inherit}
         <div>Prehľad turnajov</div>
         <div>Základné používanie bez rozšírených nástrojov</div>
       </div>
-      <button class="btn btn-dark">Začať</button>
+      <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Začať</a>
     </div>
 
     <div class="pricing-card ultra">
@@ -794,7 +826,7 @@ button,input,select{font:inherit}
         <div>Rozšírený priestor pre prezentáciu klubu a udalostí</div>
         <div>Vhodné pre pravidelné turnaje a aktívnych organizátorov</div>
       </div>
-      <button class="btn btn-gold">Vybrať Ultra</button>
+      <a href="/login/" class="btn btn-gold" style="display:inline-flex;align-items:center;">Vybrať Ultra</a>
     </div>
 
     <div class="pricing-card pro">
@@ -808,7 +840,7 @@ button,input,select{font:inherit}
         <div>Silnejší hráčsky profil a história</div>
         <div>Vhodné pre pravidelné používanie aplikácie</div>
       </div>
-      <button class="btn btn-green">Vybrať Pro</button>
+      <a href="/login/" class="btn btn-green" style="display:inline-flex;align-items:center;">Vybrať Pro</a>
     </div>
   </div>
 </section>
@@ -823,10 +855,10 @@ button,input,select{font:inherit}
     <div class="footer-card">
       <h3>Informácie</h3>
       <ul>
-        <li><a href="#">Obchodné podmienky</a></li>
-        <li><a href="#">Ochrana osobných údajov</a></li>
-        <li><a href="#">GDPR</a></li>
-        <li><a href="#">Cookies</a></li>
+        <li><a href="/obchodne-podmienky/">Obchodné podmienky</a></li>
+        <li><a href="/ochrana-osobnych-udajov/">Ochrana osobných údajov</a></li>
+        <li><a href="/ochrana-osobnych-udajov/">GDPR</a></li>
+        <li><a href="/cookies/">Cookies</a></li>
       </ul>
     </div>
 
@@ -835,7 +867,7 @@ button,input,select{font:inherit}
       <ul>
         <li><a href="#">Kontakt</a></li>
         <li><a href="#">Podpora</a></li>
-        <li><a href="#">Pre kluby a organizátorov</a></li>
+        <li><a href="/login/">Pre kluby a organizátorov</a></li>
       </ul>
     </div>
   </div>
