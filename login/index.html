@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cardscorespro – Prihlásenie / Registrácia</title>
+  <style>
+    :root{
+      --bg:#050505; --bg2:#0b0b0b; --line:rgba(255,255,255,.08); --lineSoft:rgba(255,255,255,.05);
+      --text:#f4f4f4; --muted:#a7a7a7; --gold:#d8b04b; --green:#22d36b; --danger:#c85757; --shadow:0 20px 60px rgba(0,0,0,.34);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      min-height:100vh;
+      font-family:Inter,Arial,Helvetica,sans-serif;
+      color:var(--text);
+      background:radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 24%), linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+      display:grid; place-items:center; padding:24px 16px;
+    }
+    button,input{font:inherit}
+    .shell{width:min(520px,100%);display:grid;gap:18px}
+    .panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
+    .brand{padding:18px;display:flex;justify-content:center;align-items:center;gap:14px}
+    .brand-mark{width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em}
+    .brand-title{font-size:1.35rem;font-weight:900;letter-spacing:-.04em}
+    .brand-title .gold{color:var(--gold)} .brand-title .white{color:#fff}
+    .card{padding:22px;display:grid;gap:18px}
+    .switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:6px;border-radius:18px;border:1px solid var(--lineSoft);background:rgba(255,255,255,.02)}
+    .switch-btn{min-height:48px;border:none;border-radius:14px;background:transparent;color:var(--text);font-weight:900;cursor:pointer}
+    .switch-btn.active{background:var(--green);color:#06230f}
+    h1,p{margin:0}
+    h1{color:var(--gold);font-size:clamp(1.9rem,4vw,2.6rem);line-height:1.02;letter-spacing:-.05em;text-align:center}
+    .subtitle{color:var(--muted);text-align:center;line-height:1.55;font-size:.95rem}
+    .form{display:grid;gap:12px}
+    .field{display:grid;gap:8px}
+    .field label{color:#ddd;font-size:.9rem;font-weight:800}
+    .input{width:100%;min-height:52px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);outline:none}
+    .input::placeholder{color:#888}
+    .captcha{min-height:74px;border-radius:18px;border:1px dashed rgba(216,176,75,.22);background:rgba(216,176,75,.05);display:grid;place-items:center;text-align:center;color:#ead7a2;padding:14px;font-size:.94rem;line-height:1.45}
+    .btn{min-height:52px;border:none;border-radius:16px;font-weight:900;cursor:pointer}
+    .btn-primary{background:var(--green);color:#06230f}
+    .socials{display:grid;gap:10px}
+    .social-btn{min-height:50px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-weight:900;cursor:pointer}
+    .notice,.error{display:none;padding:12px 14px;border-radius:14px;font-size:.92rem;line-height:1.5;text-align:center}
+    .notice{background:rgba(34,211,107,.10);border:1px solid rgba(34,211,107,.18);color:#d8ffe6}
+    .error{background:rgba(200,87,87,.12);border:1px solid rgba(200,87,87,.18);color:#ffd6d6}
+    .muted-link{text-align:center;color:var(--muted);font-size:.9rem}
+    .hidden{display:none !important}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="panel brand">
+      <div class="brand-mark">CSP</div>
+      <div class="brand-title"><span class="gold">CardScores</span><span class="white">Pro</span></div>
+    </div>
+
+    <div class="panel card">
+      <div class="switch">
+        <button class="switch-btn active" id="loginTab" type="button">Prihlásenie</button>
+        <button class="switch-btn" id="registerTab" type="button">Registrácia</button>
+      </div>
+
+      <div id="loginView">
+        <h1>Prihlásenie</h1>
+        <p class="subtitle">Vstúp do svojho účtu.</p>
+
+        <div class="form">
+          <div class="field">
+            <label for="loginEmail">E-mail</label>
+            <input id="loginEmail" class="input" type="email" placeholder="Zadaj e-mail" />
+          </div>
+
+          <div class="field">
+            <label for="loginPassword">Heslo</label>
+            <input id="loginPassword" class="input" type="password" placeholder="Zadaj heslo" />
+          </div>
+
+          <div class="captcha">Captcha overenie<br>miesto pripravené na napojenie</div>
+
+          <div class="notice" id="loginNotice"></div>
+          <div class="error" id="loginError"></div>
+
+          <button class="btn btn-primary" id="loginBtn" type="button">Prihlásiť sa</button>
+
+          <div class="socials">
+            <button class="social-btn" type="button">Pokračovať cez Google</button>
+            <button class="social-btn" type="button">Pokračovať cez Apple</button>
+            <button class="social-btn" type="button">Pokračovať cez Facebook</button>
+          </div>
+
+          <div class="muted-link">Zabudnuté heslo</div>
+        </div>
+      </div>
+
+      <div id="registerView" class="hidden">
+        <h1>Registrácia</h1>
+        <p class="subtitle">Vytvor si nový účet.</p>
+
+        <div class="form">
+          <div class="field">
+            <label for="firstName">Meno</label>
+            <input id="firstName" class="input" type="text" placeholder="Zadaj meno" />
+          </div>
+
+          <div class="field">
+            <label for="lastName">Priezvisko</label>
+            <input id="lastName" class="input" type="text" placeholder="Zadaj priezvisko" />
+          </div>
+
+          <div class="field">
+            <label for="registerEmail">E-mail</label>
+            <input id="registerEmail" class="input" type="email" placeholder="Zadaj e-mail" />
+          </div>
+
+          <div class="field">
+            <label for="registerPassword">Heslo</label>
+            <input id="registerPassword" class="input" type="password" placeholder="Zadaj heslo" />
+          </div>
+
+          <div class="field">
+            <label for="confirmPassword">Potvrdenie hesla</label>
+            <input id="confirmPassword" class="input" type="password" placeholder="Potvrď heslo" />
+          </div>
+
+          <div class="captcha">Captcha overenie<br>miesto pripravené na napojenie</div>
+
+          <div class="notice" id="registerNotice"></div>
+          <div class="error" id="registerError"></div>
+
+          <button class="btn btn-primary" id="registerBtn" type="button">Registrovať sa</button>
+
+          <div class="socials">
+            <button class="social-btn" type="button">Pokračovať cez Google</button>
+            <button class="social-btn" type="button">Pokračovať cez Apple</button>
+            <button class="social-btn" type="button">Pokračovať cez Facebook</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loginTab = document.getElementById("loginTab");
+    const registerTab = document.getElementById("registerTab");
+    const loginView = document.getElementById("loginView");
+    const registerView = document.getElementById("registerView");
+
+    function showLogin(){
+      loginTab.classList.add("active");
+      registerTab.classList.remove("active");
+      loginView.classList.remove("hidden");
+      registerView.classList.add("hidden");
+    }
+
+    function showRegister(){
+      registerTab.classList.add("active");
+      loginTab.classList.remove("active");
+      registerView.classList.remove("hidden");
+      loginView.classList.add("hidden");
+    }
+
+    loginTab.addEventListener("click", showLogin);
+    registerTab.addEventListener("click", showRegister);
+
+    function showBox(id, text){
+      const box = document.getElementById(id);
+      box.textContent = text;
+      box.style.display = "block";
+    }
+
+    function hideBox(id){
+      const box = document.getElementById(id);
+      box.textContent = "";
+      box.style.display = "none";
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      hideBox("loginNotice");
+      hideBox("loginError");
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      if(!email || !password){
+        showBox("loginError", "Vyplň e-mail a heslo.");
+        return;
+      }
+      showBox("loginNotice", "Frontend je pripravený. Prihlásenie sa napojí neskôr.");
+    });
+
+    document.getElementById("registerBtn").addEventListener("click", () => {
+      hideBox("registerNotice");
+      hideBox("registerError");
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("registerEmail").value.trim();
+      const password = document.getElementById("registerPassword").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+      if(!firstName || !lastName || !email || !password || !confirmPassword){
+        showBox("registerError", "Vyplň všetky polia.");
+        return;
+      }
+      if(password !== confirmPassword){
+        showBox("registerError", "Heslá sa nezhodujú.");
+        return;
+      }
+      showBox("registerNotice", "Frontend je pripravený. Registrácia sa napojí neskôr.");
+    });
+  </script>
+</body>
+</html>

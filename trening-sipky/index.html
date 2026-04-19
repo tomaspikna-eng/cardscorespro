@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSP – Šípky 501</title>
+<style>
+:root{
+  --bg:#050505;--bg2:#0b0b0b;--line:rgba(255,255,255,.08);
+  --text:#f4f4f4;--muted:#a7a7a7;--gold:#d8b04b;--green:#22d36b;--shadow:0 20px 60px rgba(0,0,0,.34)
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{
+  min-height:100vh;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--text);
+  background:radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 26%), linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+}
+.page{width:min(1360px,calc(100% - 32px));margin:24px auto 40px;display:grid;gap:18px}
+.panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
+.hero,.panel-inner{padding:18px}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900}
+.hero-title h1{margin:0 0 6px;font-size:2rem;letter-spacing:-.05em;color:var(--gold);line-height:1}
+.hero-title p{margin:0;color:var(--muted);font-size:.95rem}
+.state-box{min-width:220px;padding:14px 16px;border-radius:18px;border:1px solid rgba(34,211,107,.18);background:linear-gradient(180deg, rgba(34,211,107,.12), rgba(34,211,107,.06))}
+.state-box small{display:block;color:#9ed8b7;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.state-box strong{color:#c8ffdc;font-size:1.04rem}
+
+.players{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:start}
+.player{
+  padding:20px;border-radius:24px;border:1px solid var(--line);
+  background:rgba(255,255,255,.02)
+}
+.player.active{border-color:rgba(34,211,107,.28);background:rgba(34,211,107,.08)}
+.player h2{margin:0 0 8px;font-size:1.4rem;color:var(--gold)}
+.player p{margin:0;color:var(--muted);font-size:1rem}
+.score{margin-top:20px;font-size:4.4rem;line-height:1;font-weight:900}
+.legs{margin-top:12px;color:#d7e8ff;font-weight:800;font-size:1.05rem}
+.middle-stat{
+  width:220px;align-self:center;
+  min-height:140px;padding:18px;border-radius:24px;border:1px solid var(--line);
+  background:rgba(255,255,255,.02);display:grid;align-content:center;justify-items:center;text-align:center
+}
+.middle-stat small,.side-stat small{
+  display:block;color:#8f8f8f;font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px
+}
+.middle-stat strong,.side-stat strong{display:block;font-size:2.2rem;color:var(--gold);line-height:1}
+.side-stat span{
+  display:block;
+  margin-top:10px;
+  color:var(--muted);
+  font-size:.95rem;
+  font-weight:800;
+}
+
+.center-grid{display:grid;grid-template-columns:260px minmax(420px,620px) 260px;gap:18px;align-items:start;margin-top:22px}
+.side-stat{
+  min-height:170px;padding:18px;border-radius:24px;border:1px solid var(--line);
+  background:rgba(255,255,255,.02);display:grid;align-content:center;justify-items:center;text-align:center
+}
+.center-zone{display:grid;gap:16px}
+.input-screen{
+  min-height:126px;border-radius:24px;border:1px solid rgba(216,176,75,.18);
+  background:rgba(216,176,75,.07);display:grid;place-items:center
+}
+.input-screen strong{font-size:4.8rem;line-height:1;color:var(--gold)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.key{
+  min-height:96px;border:none;border-radius:22px;background:rgba(255,255,255,.04);
+  border:1px solid var(--line);color:var(--text);font:inherit;font-size:2rem;font-weight:900;cursor:pointer
+}
+.key:hover{background:rgba(255,255,255,.07)}
+.key.action{font-size:1.1rem}
+.key.clear{color:#ffd0d0}
+.key.confirm{background:var(--green);color:#06230f;border-color:transparent}
+
+.toolbar{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.btn{
+  min-height:48px;padding:0 16px;border:none;border-radius:14px;font:inherit;font-weight:900;cursor:pointer
+}
+.btn-dark{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
+.btn-green{background:var(--green);color:#06230f}
+
+.log-table{border:1px solid var(--line);border-radius:18px;overflow:auto;background:rgba(255,255,255,.02)}
+table{width:100%;border-collapse:collapse;min-width:760px}
+thead th{text-align:left;padding:14px 12px;font-size:.74rem;text-transform:uppercase;letter-spacing:.12em;color:#8f8f8f;background:rgba(0,0,0,.22);border-bottom:1px solid var(--line)}
+tbody td{padding:14px 12px;border-bottom:1px solid rgba(255,255,255,.05);font-size:.92rem}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.58);display:none;align-items:center;justify-content:center;padding:20px;z-index:40}
+.overlay.show{display:flex}
+.modal{
+  width:min(560px,100%);border:1px solid var(--line);border-radius:26px;background:linear-gradient(180deg,rgba(22,22,22,.98),rgba(8,8,8,.98));box-shadow:var(--shadow);padding:18px
+}
+.modal h3{margin:0 0 8px;color:var(--gold);font-size:1.1rem}
+.modal p{margin:0 0 16px;color:var(--muted)}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.modal-box{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.02);text-align:center}
+.modal-box small{display:block;color:#8f8f8f;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.modal-box strong{display:block;font-size:2rem;color:var(--gold)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+
+.note{padding:12px 14px;border-radius:14px;background:rgba(216,176,75,.07);border:1px solid rgba(216,176,75,.16);color:#ead7a2;font-size:.9rem}
+@media (max-width:1120px){
+  .players{grid-template-columns:1fr}
+  .middle-stat{width:100%}
+  .center-grid{grid-template-columns:1fr}
+  .side-stat{min-height:110px}
+}
+@media (max-width:640px){
+  .hero-title h1{font-size:1.7rem}
+  .score{font-size:3.4rem}
+  .input-screen strong{font-size:3.7rem}
+  .key{min-height:82px;font-size:1.7rem}
+  .modal-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<section class="panel hero">
+  <div class="hero-top">
+    <div class="brand">
+      <div class="brand-mark">CSP</div>
+      <div class="hero-title">
+        <h1 id="disciplineTitle">Šípky - 501</h1>
+        <p>Tomáš Pikna</p>
+      </div>
+    </div>
+    <div class="state-box">
+      <small>Na ťahu</small>
+      <strong id="turnLabel">Tomáš Pikna</strong>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-inner">
+    <div class="players">
+      <div class="player active" id="player0Card">
+        <h2 id="player0Name">Tomáš Pikna</h2>
+        <p id="player0State">Na ťahu</p>
+        <div class="score" id="player0Score">501</div>
+        <div class="legs">Legy: <span id="player0Legs">0</span></div>
+      </div>
+
+      <div class="middle-stat">
+        <div>
+          <small>Vyhraté legy</small>
+          <strong id="wonLegsStat">0 : 0</strong>
+        </div>
+      </div>
+
+      <div class="player" id="player1Card">
+        <h2 id="player1Name">Tréningový súper</h2>
+        <p id="player1State">Čaká</p>
+        <div class="score" id="player1Score">501</div>
+        <div class="legs">Legy: <span id="player1Legs">0</span></div>
+      </div>
+    </div>
+
+    <div class="center-grid">
+      <div class="side-stat">
+        <div>
+          <small>Najvyšší leg hráč 1</small>
+          <strong id="bestLegP1Stat">0</strong>
+          <span id="bestLegP1Darts">0 šípok na zavretie</span>
+        </div>
+      </div>
+
+      <div class="center-zone">
+        <div class="input-screen">
+          <strong id="entryDisplay">0</strong>
+        </div>
+
+        <div class="keypad">
+          <button class="key" data-digit="1">1</button>
+          <button class="key" data-digit="2">2</button>
+          <button class="key" data-digit="3">3</button>
+          <button class="key" data-digit="4">4</button>
+          <button class="key" data-digit="5">5</button>
+          <button class="key" data-digit="6">6</button>
+          <button class="key" data-digit="7">7</button>
+          <button class="key" data-digit="8">8</button>
+          <button class="key" data-digit="9">9</button>
+          <button class="key action clear" id="clearBtn">Vymazať</button>
+          <button class="key" data-digit="0">0</button>
+          <button class="key action confirm" id="confirmBtn">Potvrdiť</button>
+        </div>
+      </div>
+
+      <div class="side-stat">
+        <div>
+          <small>Najvyšší leg hráč 2</small>
+          <strong id="bestLegP2Stat">0</strong>
+          <span id="bestLegP2Darts">0 šípok na zavretie</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbar" style="margin-top:18px">
+      <button class="btn btn-dark" id="switchBtn">Prepnúť hráča</button>
+      <button class="btn btn-dark" id="undoBtn">Upraviť posledný zápis</button>
+      <button class="btn btn-green" id="endMatchBtn">Ukončiť tréning / zápas</button>
+      <button class="btn btn-green" id="saveBtn">Uložiť tréning</button>
+    </div>
+
+    <div class="note" id="messageBox" style="display:none;margin-top:14px"></div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-inner">
+    <h2 style="margin:0 0 12px;color:var(--gold);font-size:1.04rem">Priebeh</h2>
+    <div class="log-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Poradie</th>
+            <th>Hráč</th>
+            <th>Body</th>
+            <th>Zostáva</th>
+            <th>Leg</th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="overlay" id="endModal">
+  <div class="modal">
+    <h3>Ukončiť tréning / zápas</h3>
+    <p>Zapíš konečný stav legov.</p>
+    <div class="modal-grid">
+      <div class="modal-box">
+        <small id="modalP1Name">Tomáš Pikna</small>
+        <strong id="modalP1Legs">0</strong>
+      </div>
+      <div class="modal-box">
+        <small id="modalP2Name">Tréningový súper</small>
+        <strong id="modalP2Legs">0</strong>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-dark" id="closeModalBtn">Zavrieť</button>
+      <button class="btn btn-green" id="confirmEndBtn">Potvrdiť výsledok</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const trainingSetup = JSON.parse(localStorage.getItem("csp_darts_training_setup") || "null") || {
+  discipline: "501",
+  legsLabel: "Best of 5"
+};
+
+const startScore = trainingSetup.discipline === "301" ? 301 : trainingSetup.discipline === "701" ? 701 : 501;
+const players = [
+  { name: "Tomáš Pikna", score: startScore, legs: 0, bestLeg: 0, bestLegDarts: 0, currentLegDarts: 0 },
+  { name: "Tréningový súper", score: startScore, legs: 0, bestLeg: 0, bestLegDarts: 0, currentLegDarts: 0 }
+];
+
+let activePlayer = 0;
+let currentLeg = 1;
+let entry = "";
+let log = [];
+
+const entryDisplay = document.getElementById("entryDisplay");
+const turnLabel = document.getElementById("turnLabel");
+const logBody = document.getElementById("logBody");
+const messageBox = document.getElementById("messageBox");
+const wonLegsStat = document.getElementById("wonLegsStat");
+const bestLegP1Stat = document.getElementById("bestLegP1Stat");
+const bestLegP2Stat = document.getElementById("bestLegP2Stat");
+const bestLegP1Darts = document.getElementById("bestLegP1Darts");
+const bestLegP2Darts = document.getElementById("bestLegP2Darts");
+const endModal = document.getElementById("endModal");
+
+document.getElementById("disciplineTitle").textContent = `Šípky - ${trainingSetup.discipline}`;
+
+function showMessage(text) {
+  messageBox.textContent = text;
+  messageBox.style.display = "block";
+  clearTimeout(showMessage._t);
+  showMessage._t = setTimeout(() => {
+    messageBox.style.display = "none";
+  }, 1800);
+}
+
+function updateStats() {
+  wonLegsStat.textContent = `${players[0].legs} : ${players[1].legs}`;
+  bestLegP1Stat.textContent = String(players[0].bestLeg);
+  bestLegP2Stat.textContent = String(players[1].bestLeg);
+  bestLegP1Darts.textContent = `${players[0].bestLegDarts} šípok na zavretie`;
+  bestLegP2Darts.textContent = `${players[1].bestLegDarts} šípok na zavretie`;
+}
+
+function updateDisplay() {
+  entryDisplay.textContent = entry === "" ? "0" : entry;
+  for (let i = 0; i < 2; i++) {
+    document.getElementById(`player${i}Score`).textContent = players[i].score;
+    document.getElementById(`player${i}Legs`).textContent = players[i].legs;
+    document.getElementById(`player${i}Card`).classList.toggle("active", i === activePlayer);
+    document.getElementById(`player${i}State`).textContent = i === activePlayer ? "Na ťahu" : "Čaká";
+  }
+  turnLabel.textContent = players[activePlayer].name;
+  updateStats();
+  renderLog();
+}
+
+function renderLog() {
+  logBody.innerHTML = "";
+  log.forEach((item, index) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${item.playerName}</td>
+      <td>${item.points}</td>
+      <td>${item.remaining}</td>
+      <td>${item.leg}</td>
+    `;
+    logBody.appendChild(tr);
+  });
+}
+
+function addDigit(digit) {
+  if (entry.length >= 3) return;
+  if (entry === "0") entry = digit;
+  else entry += digit;
+  updateDisplay();
+}
+
+function clearEntry() {
+  entry = "";
+  updateDisplay();
+}
+
+function switchPlayer() {
+  activePlayer = activePlayer === 0 ? 1 : 0;
+  updateDisplay();
+}
+
+function confirmEntry() {
+  const points = Number(entry || 0);
+  if (!Number.isFinite(points) || points < 0) return;
+  if (points > 180) {
+    showMessage("Maximum je 180 bodov.");
+    return;
+  }
+
+  const player = players[activePlayer];
+  const newScore = player.score - points;
+
+  if (newScore < 0) {
+    showMessage("Zápis je vyšší než zostávajúce skóre.");
+    return;
+  }
+
+  player.currentLegDarts += 3;
+
+  if (points > player.bestLeg) player.bestLeg = points;
+
+  player.score = newScore;
+  log.push({
+    playerIndex: activePlayer,
+    playerName: player.name,
+    points,
+    previousScore: player.score + points,
+    remaining: player.score,
+    leg: currentLeg
+  });
+
+  entry = "";
+  updateDisplay();
+
+  if (player.score === 0) {
+    player.legs += 1;
+    player.bestLegDarts = player.bestLegDarts === 0 ? player.currentLegDarts : Math.min(player.bestLegDarts, player.currentLegDarts);
+    showMessage(player.name + " vyhral leg.");
+    players[0].score = startScore;
+    players[1].score = startScore;
+    players[0].currentLegDarts = 0;
+    players[1].currentLegDarts = 0;
+    currentLeg += 1;
+    activePlayer = 0;
+    updateDisplay();
+  } else {
+    switchPlayer();
+  }
+}
+
+function undoLast() {
+  const last = log.pop();
+  if (!last) {
+    showMessage("Nie je čo upraviť.");
+    return;
+  }
+  players[last.playerIndex].score = last.previousScore;
+  activePlayer = last.playerIndex;
+  updateDisplay();
+}
+
+function saveTraining() {
+  const payload = {
+    discipline: trainingSetup.discipline,
+    legsLabel: trainingSetup.legsLabel,
+    currentLeg,
+    activePlayer,
+    players,
+    log
+  };
+  localStorage.setItem("csp_darts_training_live", JSON.stringify(payload));
+  showMessage("Tréning bol uložený.");
+}
+
+function openEndModal() {
+  document.getElementById("modalP1Name").textContent = players[0].name;
+  document.getElementById("modalP2Name").textContent = players[1].name;
+  document.getElementById("modalP1Legs").textContent = players[0].legs;
+  document.getElementById("modalP2Legs").textContent = players[1].legs;
+  endModal.classList.add("show");
+}
+
+function closeEndModal() {
+  endModal.classList.remove("show");
+}
+
+function confirmEndMatch() {
+  saveTraining();
+  closeEndModal();
+  showMessage("Tréning / zápas bol ukončený.");
+}
+
+document.querySelectorAll("[data-digit]").forEach(btn => {
+  btn.addEventListener("click", () => addDigit(btn.dataset.digit));
+});
+document.getElementById("clearBtn").addEventListener("click", clearEntry);
+document.getElementById("switchBtn").addEventListener("click", switchPlayer);
+document.getElementById("confirmBtn").addEventListener("click", confirmEntry);
+document.getElementById("undoBtn").addEventListener("click", undoLast);
+document.getElementById("saveBtn").addEventListener("click", saveTraining);
+document.getElementById("endMatchBtn").addEventListener("click", openEndModal);
+document.getElementById("closeModalBtn").addEventListener("click", closeEndModal);
+document.getElementById("confirmEndBtn").addEventListener("click", confirmEndMatch);
+
+updateDisplay();
+</script>
+</body>
+</html>

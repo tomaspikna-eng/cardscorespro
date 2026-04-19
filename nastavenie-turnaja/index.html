@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSP – Nastavenie turnaja DB</title>
+<style>
+:root{
+  --bg:#050505;--bg2:#0b0b0b;--line:rgba(255,255,255,.08);--line-soft:rgba(255,255,255,.05);
+  --text:#f4f4f4;--muted:#a7a7a7;--gold:#d8b04b;--green:#22d36b;--danger:#d96a6a;--shadow:0 20px 60px rgba(0,0,0,.34)
+}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{
+  min-height:100vh;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--text);
+  background:radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 26%),linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%)
+}
+.page{width:min(1380px,calc(100% - 32px));margin:24px auto 40px;display:grid;gap:18px}
+.hero,.panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
+.hero{padding:18px 20px 20px;display:grid;gap:16px}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:52px;height:52px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em;flex:0 0 auto}
+.hero-title h1{margin:0;font-size:2rem;letter-spacing:-.05em;color:var(--gold);line-height:1}
+.mode-status{min-width:230px;padding:14px 16px;border-radius:18px;border:1px solid rgba(34,211,107,.18);background:linear-gradient(180deg, rgba(34,211,107,.12), rgba(34,211,107,.06))}
+.mode-status small{display:block;color:#9ed8b7;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.mode-status strong{color:#c8ffdc;font-size:1.04rem}
+.cta-switch{display:flex;gap:12px;flex-wrap:wrap}
+.switch-btn,.btn,.field-display,.option-btn,.mini-btn,.save-btn,.cancel-btn,.close-btn{cursor:pointer}
+.switch-btn{min-height:52px;padding:0 18px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--text);font-size:1rem;font-weight:800}
+.switch-btn.active{background:var(--green);color:#06230f;border-color:transparent}
+.layout{display:grid;grid-template-columns:1.08fr .92fr;gap:18px;align-items:start}
+.panel-inner{padding:18px}
+.panel h2{margin:0 0 12px;font-size:1.05rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.field{margin-bottom:10px}
+.label{display:block;margin:0 0 6px;color:#8f8f8f;font-size:.68rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.input,.textarea,.field-display{
+  width:100%;background:rgba(255,255,255,.02);color:var(--text);border:1px solid var(--line);border-radius:14px;outline:none
+}
+.input{min-height:48px;padding:0 14px;font-size:.95rem}
+.textarea{min-height:104px;padding:14px;resize:vertical;font-size:.95rem;line-height:1.55}
+.field-display{min-height:48px;padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.95rem}
+.field-display span:last-child{color:var(--gold);font-weight:800}
+.player-layout,.seed-layout{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.box{background:rgba(255,255,255,.02);border:1px solid var(--line);border-radius:18px;padding:12px}
+.box-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
+.badge,.seed-tag{display:inline-flex;align-items:center;min-height:24px;padding:0 8px;border-radius:999px;background:rgba(216,176,75,.10);border:1px solid rgba(216,176,75,.14);color:var(--gold);font-size:.7rem;font-weight:800}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{min-height:42px;padding:0 14px;border:none;border-radius:14px;font-size:.9rem;font-weight:800}
+.btn-green{background:var(--green);color:#06230f}
+.btn-dark{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
+.btn-red{background:rgba(217,106,106,.16);color:#ffd0d0;border:1px solid rgba(217,106,106,.26)}
+.player-list,.seed-list,.rules-list,.summary-box{display:grid;gap:8px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:40px;padding:0 12px;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid var(--line-soft);font-size:.9rem}
+.row.empty{color:var(--muted);justify-content:flex-start;padding:12px;min-height:54px}
+.summary-item{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.summary-item small{display:block;color:#8f8f8f;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.summary-item strong{display:block;font-size:1rem}
+.rule{padding:12px 14px;border-radius:14px;border:1px solid var(--line-soft);background:rgba(255,255,255,.02)}
+.rule strong{display:block;margin-bottom:6px;font-size:.92rem}
+.rule span{color:var(--muted);font-size:.82rem;line-height:1.45;display:block}
+.notice,.error{margin-top:12px;padding:12px 14px;border-radius:14px;font-size:.9rem;font-weight:700;display:none}
+.notice{background:rgba(34,211,107,.12);border:1px solid rgba(34,211,107,.22);color:#c8ffdc}
+.error{background:rgba(217,106,106,.12);border:1px solid rgba(217,106,106,.22);color:#ffd0d0}
+.preview{margin-top:14px;padding:14px;border-radius:16px;border:1px solid rgba(216,176,75,.16);background:rgba(216,176,75,.07);display:none}
+.preview.show{display:block}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px;z-index:9999}
+.modal-backdrop.show{display:flex}
+.modal{width:min(620px,100%);border:1px solid var(--line);border-radius:24px;background:linear-gradient(180deg, rgba(20,20,20,.98), rgba(10,10,10,.98));box-shadow:var(--shadow);padding:18px}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.modal-head h3{margin:0;color:var(--gold);font-size:1.1rem}
+.close-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text)}
+.modal-search,.number-input{width:100%;min-height:46px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--text);font:inherit;outline:none;margin-bottom:12px}
+.option-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-height:420px;overflow:auto}
+.option-btn{min-height:54px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-weight:800;text-align:left}
+.option-btn.active{background:rgba(34,211,107,.14);border-color:rgba(34,211,107,.22);color:#c8ffdc}
+.number-wrap{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center}
+.mini-btn{min-height:44px;padding:0 14px;border:none;border-radius:14px;font-weight:900;background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
+.modal-bottom{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.save-btn,.cancel-btn{min-height:44px;padding:0 14px;border:none;border-radius:14px;font-weight:900}
+.save-btn{background:var(--green);color:#06230f}
+.cancel-btn{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
+@media (max-width:1100px){.layout{grid-template-columns:1fr}}
+@media (max-width:760px){.two,.player-layout,.seed-layout,.option-grid,.number-wrap{grid-template-columns:1fr}.hero-title h1{font-size:1.7rem}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="page">
+<header class="hero">
+  <div class="hero-top">
+    <div class="brand">
+      <div class="brand-mark">CSP</div>
+      <div class="hero-title"><h1>Nastavenie turnaja</h1></div>
+    </div>
+    <div class="mode-status"><small>Aktívna sekcia</small><strong id="activeSportLabel">Biliard</strong></div>
+  </div>
+  <div class="cta-switch">
+    <button class="switch-btn active" data-sport="billiard" type="button">Biliard</button>
+    <button class="switch-btn" data-sport="darts" type="button">Šípky</button>
+    <button class="switch-btn" data-sport="bowling" type="button">Bowling</button>
+  </div>
+</header>
+
+<main class="layout">
+<section class="panel"><div class="panel-inner">
+  <h2>Základ turnaja</h2>
+
+  <div class="two">
+    <div class="field"><label class="label" for="tournamentName">Názov turnaja</label><input class="input" id="tournamentName" value="Tour de Pool" /></div>
+    <div class="field"><label class="label" for="location">Kde</label><input class="input" id="location" value="Moment Club" /></div>
+  </div>
+
+  <div class="two">
+    <div class="field"><label class="label" for="date">Dátum</label><input class="input" id="date" type="date" value="2026-04-15" /></div>
+    <div class="field"><label class="label" for="time">Čas</label><input class="input" id="time" type="time" value="18:00" /></div>
+  </div>
+
+  <div class="two">
+    <div class="field"><label class="label">Disciplína</label><button class="field-display" id="disciplineOpen" type="button"><span id="disciplineText">8-Ball</span><span>Vybrať</span></button></div>
+    <div class="field"><label class="label">Štruktúra turnaja</label><button class="field-display" id="structureOpen" type="button"><span id="structureText">Double KO</span><span>Vybrať</span></button></div>
+  </div>
+
+  <div class="field"><label class="label">Veľkosť poľa</label><button class="field-display" id="fieldSizeOpen" type="button"><span id="fieldSizeText">16</span><span>Vybrať</span></button></div>
+
+  <div class="field"><label class="label" for="singlePlayer">Pridať hráča jednotlivo</label>
+    <div class="player-layout">
+      <div class="box">
+        <input class="input" id="singlePlayer" placeholder="Zadaj meno hráča" />
+        <div class="btn-row">
+          <button class="btn btn-green" id="addPlayerBtn" type="button">Pridať hráča</button>
+          <button class="btn btn-dark" id="clearSingleBtn" type="button">Vyčistiť pole</button>
+        </div>
+        <label class="label" for="bulkPlayers" style="margin-top:14px;">Hromadné vloženie hráčov</label>
+        <textarea class="textarea" id="bulkPlayers" placeholder="Každý hráč na nový riadok"></textarea>
+        <div class="btn-row">
+          <button class="btn btn-green" id="bulkAddBtn" type="button">Pridať hromadne</button>
+          <button class="btn btn-dark" id="sampleBtn" type="button">Vložiť vzor</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-head"><strong>Zoznam hráčov</strong><span class="badge" id="playerCountBadge">Počet hráčov: 0</span></div>
+        <div class="player-list" id="playerList"></div>
+        <div class="btn-row"><button class="btn btn-red" id="clearPlayersBtn" type="button">Vymazať všetkých hráčov</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field"><label class="label">Nasadzovanie hráčov</label>
+    <div class="seed-layout">
+      <div class="box">
+        <div class="box-head"><strong>Automatické nasadenie</strong><span class="badge" id="seedRuleBadge">16 = 4 nasadení</span></div>
+        <div class="seed-list" id="seedList"></div>
+      </div>
+      <div class="box">
+        <div class="box-head"><strong>Podmienky štruktúry</strong><span class="badge" id="rulesBadge">Double KO</span></div>
+        <div class="rules-list" id="rulesList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice" id="leftNotice"></div>
+  <div class="error" id="leftError"></div>
+</div></section>
+
+<aside class="panel"><div class="panel-inner">
+  <h2>Rýchly súhrn</h2>
+  <div class="summary-box">
+    <div class="summary-item"><small>Šport</small><strong id="summarySport">Biliard</strong></div>
+    <div class="summary-item"><small>Názov turnaja</small><strong id="summaryName">Tour de Pool</strong></div>
+    <div class="summary-item"><small>Miesto a čas</small><strong id="summaryPlaceTime">Moment Club • 15. 04. 2026 • 18:00</strong></div>
+    <div class="summary-item"><small>Disciplína</small><strong id="summaryDiscipline">8-Ball</strong></div>
+    <div class="summary-item"><small>Štruktúra</small><strong id="summaryStructure">Double KO</strong></div>
+    <div class="summary-item"><small>Veľkosť poľa</small><strong id="summaryFieldSize">16</strong></div>
+    <div class="summary-item"><small>VO</small><strong id="summaryVo">16</strong></div>
+    <div class="summary-item"><small>Registrovaní hráči</small><strong id="summaryPlayers">0 hráčov</strong></div>
+    <div class="summary-item"><small>Nasadení hráči</small><strong id="summarySeeds">—</strong></div>
+  </div>
+  <div class="btn-row" style="margin-top:14px">
+    <button class="btn btn-dark" id="draftBtn" type="button">Uložiť koncept</button>
+    <button class="btn btn-green" id="startBtn" type="button">Spustiť turnaj</button>
+  </div>
+  <div class="notice" id="rightNotice"></div>
+  <div class="error" id="rightError"></div>
+  <div class="preview" id="previewBox"><h3>Turnaj pripravený</h3><p id="previewText"></p></div>
+</div></aside>
+</main>
+</div>
+
+<div class="modal-backdrop" id="optionModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div><h3 id="modalTitle">Výber</h3></div>
+      <button class="close-btn" id="closeModal" type="button">✕</button>
+    </div>
+    <input class="modal-search" id="modalSearch" placeholder="Hľadať..." />
+    <div id="modalContent"></div>
+    <div class="modal-bottom">
+      <button class="cancel-btn" id="cancelModal" type="button">Zavrieť</button>
+      <button class="save-btn" id="saveModal" type="button">Potvrdiť</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "DOPLN_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "DOPLN_SUPABASE_ANON_KEY";
+const PROGRESSION_FILE = "priebeh_turnaja_db_fix_v3.html";
+
+const supabaseClient = (window.supabase && SUPABASE_URL !== "DOPLN_SUPABASE_URL" && SUPABASE_ANON_KEY !== "DOPLN_SUPABASE_ANON_KEY")
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+const disciplineMap = {
+  billiard: ["8-Ball","9-Ball","10-Ball","Blackball","Snooker","Straight Pool","One Pocket","Bank Pool","English Billiards","Russian Pyramid"],
+  darts: ["301","501","701","Cricket","Around the Clock","Shanghai","High Score","Killer","Split Score","Count Up"],
+  bowling: ["Kolky","Bowling"]
+};
+const structureOptions = ["Double KO","Single KO","Groups + Single KO","Round Robin"];
+const rulesByStructure = {
+  "Double KO":[["Pavúk","Víťazná aj porazená vetva."],["VO","VO sa dopočíta automaticky."],["Nasadenie","Nasadení hráči sa v prvom kole nesmú stretnúť."]],
+  "Single KO":[["Pavúk","Jeden vyraďovací pavúk."],["VO","VO sa dopočíta automaticky."],["Tempo","Rýchly turnajový formát."]],
+  "Groups + Single KO":[["Fáza 1","Najprv skupiny."],["Fáza 2","Potom Single KO."],["Poznámka","V tejto verzii sa DB kostra pripraví kompatibilne pre pokračovanie."]],
+  "Round Robin":[["Rozpis","Každý hrá s každým."],["Prehľad","Bez klasického KO pavúka."],["Zápasy","Počet zápasov rastie podľa počtu hráčov."]]
+};
+const structureDbMap = {
+  "Double KO":"double_ko",
+  "Single KO":"single_ko",
+  "Groups + Single KO":"groups_single_ko",
+  "Round Robin":"round_robin"
+};
+
+const state = { sport:"billiard", discipline:"8-Ball", structure:"Double KO", fieldSize:16, players:[] };
+const el = {
+  activeSportLabel: document.getElementById("activeSportLabel"),
+  tournamentName: document.getElementById("tournamentName"),
+  location: document.getElementById("location"),
+  date: document.getElementById("date"),
+  time: document.getElementById("time"),
+  disciplineText: document.getElementById("disciplineText"),
+  structureText: document.getElementById("structureText"),
+  fieldSizeText: document.getElementById("fieldSizeText"),
+  playerList: document.getElementById("playerList"),
+  playerCountBadge: document.getElementById("playerCountBadge"),
+  seedList: document.getElementById("seedList"),
+  seedRuleBadge: document.getElementById("seedRuleBadge"),
+  rulesList: document.getElementById("rulesList"),
+  rulesBadge: document.getElementById("rulesBadge"),
+  leftNotice: document.getElementById("leftNotice"),
+  leftError: document.getElementById("leftError"),
+  rightNotice: document.getElementById("rightNotice"),
+  rightError: document.getElementById("rightError"),
+  summarySport: document.getElementById("summarySport"),
+  summaryName: document.getElementById("summaryName"),
+  summaryPlaceTime: document.getElementById("summaryPlaceTime"),
+  summaryDiscipline: document.getElementById("summaryDiscipline"),
+  summaryStructure: document.getElementById("summaryStructure"),
+  summaryFieldSize: document.getElementById("summaryFieldSize"),
+  summaryVo: document.getElementById("summaryVo"),
+  summaryPlayers: document.getElementById("summaryPlayers"),
+  summarySeeds: document.getElementById("summarySeeds"),
+  previewBox: document.getElementById("previewBox"),
+  previewText: document.getElementById("previewText"),
+  modal: document.getElementById("optionModal"),
+  modalTitle: document.getElementById("modalTitle"),
+  modalSearch: document.getElementById("modalSearch"),
+  modalContent: document.getElementById("modalContent")
+};
+let modalType = null;
+let modalTempValue = null;
+
+function showNotice(target,text){target.textContent=text;target.style.display="block";}
+function showError(target,text){target.textContent=text;target.style.display="block";}
+function hideBox(target){target.textContent="";target.style.display="none";}
+function formatDate(iso){if(!iso)return"Bez dátumu";const [y,m,d]=iso.split("-");return `${d}. ${m}. ${y}`;}
+function playerCountText(n){if(n===1)return"1 hráč";if(n>=2&&n<=4)return`${n} hráči`;return`${n} hráčov`;}
+function getSeedCount(n){if(n<=16)return 4;if(n<=32)return 8;if(n<=64)return 16;if(n<=128)return 32;return 64;}
+function getVoCount(){return Math.max(0,state.fieldSize-state.players.length);}
+function sportLabel(){return state.sport==="billiard"?"Biliard":state.sport==="darts"?"Šípky":"Bowling";}
+
+function updateSummary(){
+  el.activeSportLabel.textContent = sportLabel();
+  el.disciplineText.textContent = state.discipline;
+  el.structureText.textContent = state.structure;
+  el.fieldSizeText.textContent = String(state.fieldSize);
+  el.summarySport.textContent = sportLabel();
+  el.summaryName.textContent = el.tournamentName.value.trim() || "Bez názvu";
+  el.summaryPlaceTime.textContent = `${el.location.value.trim() || "Bez miesta"} • ${formatDate(el.date.value)} • ${el.time.value || "Bez času"}`;
+  el.summaryDiscipline.textContent = state.discipline;
+  el.summaryStructure.textContent = state.structure;
+  el.summaryFieldSize.textContent = String(state.fieldSize);
+  el.summaryVo.textContent = String(getVoCount());
+  el.summaryPlayers.textContent = playerCountText(state.players.length);
+  el.playerCountBadge.textContent = `Počet hráčov: ${state.players.length}`;
+  const assignedSeeds = state.players
+    .filter(p => p.seed !== "" && p.seed !== null && p.seed !== undefined)
+    .sort((a,b) => Number(a.seed) - Number(b.seed))
+    .map(p => `${p.seed}. ${p.name}`);
+  el.summarySeeds.textContent = assignedSeeds.length ? assignedSeeds.join(", ") : "—";
+  el.seedRuleBadge.textContent = `Manuálne seedovanie`;
+  renderRules();
+}
+function renderRules(){
+  el.rulesList.innerHTML = "";
+  el.rulesBadge.textContent = state.structure;
+  (rulesByStructure[state.structure] || []).forEach(rule=>{
+    const div=document.createElement("div");
+    div.className="rule";
+    div.innerHTML=`<strong>${rule[0]}</strong><span>${rule[1]}</span>`;
+    el.rulesList.appendChild(div);
+  });
+}
+function renderPlayers(){
+  el.playerList.innerHTML = "";
+  if(!state.players.length){
+    const empty=document.createElement("div");
+    empty.className="row empty";
+    empty.textContent="Zatiaľ nie je pridaný žiadny hráč.";
+    el.playerList.appendChild(empty);
+  } else {
+    state.players.forEach((player,index)=>{
+      const row=document.createElement("div");
+      row.className="row";
+      row.innerHTML=`<span>${index+1}. ${player.name}</span><button class="btn btn-red" data-remove="${index}" type="button" style="min-height:34px;padding:0 10px;font-size:.78rem;">Odstrániť</button>`;
+      el.playerList.appendChild(row);
+    });
+  }
+  renderSeeds();
+  updateSummary();
+}
+function renderSeeds(){
+  el.seedList.innerHTML = "";
+  if(!state.players.length){
+    const empty=document.createElement("div");
+    empty.className="row empty";
+    empty.textContent="Najprv pridaj hráčov.";
+    el.seedList.appendChild(empty);
+    return;
+  }
+  const maxSeed = Math.max(state.fieldSize, state.players.length, 64);
+  state.players.forEach((player,index)=>{
+    const row=document.createElement("div");
+    row.className="row";
+    let options = `<option value="">Bez seedu</option>`;
+    for(let i=1;i<=maxSeed;i++){
+      options += `<option value="${i}" ${String(player.seed)===String(i) ? "selected" : ""}>${i}</option>`;
+    }
+    row.innerHTML=`<span>${index+1}. ${player.name}</span><select data-seed-index="${index}" class="input" style="max-width:140px;min-height:38px;padding:0 10px">${options}</select>`;
+    el.seedList.appendChild(row);
+  });
+}
+function addPlayer(name){
+  const clean=name.trim();
+  if(!clean)return{ok:false,message:"Meno hráča je prázdne."};
+  if(state.players.some(p=>p.name.toLowerCase()===clean.toLowerCase()))return{ok:false,message:`Hráč ${clean} už v zozname existuje.`};
+  state.players.push({ name: clean, seed: "" });
+  return{ok:true};
+}
+
+function openModal(type){
+  modalType = type;
+  modalTempValue = type === "discipline" ? state.discipline : type === "structure" ? state.structure : state.fieldSize;
+  el.modalSearch.value = "";
+  if(type === "discipline"){
+    el.modalTitle.textContent = "Disciplína";
+    renderOptionButtons(disciplineMap[state.sport]);
+  }
+  if(type === "structure"){
+    el.modalTitle.textContent = "Štruktúra turnaja";
+    renderOptionButtons(structureOptions);
+  }
+  if(type === "fieldSize"){
+    el.modalTitle.textContent = "Veľkosť poľa";
+    renderFieldSizeModal();
+  }
+  el.modal.classList.add("show");
+}
+function renderOptionButtons(list){
+  const q = el.modalSearch.value.trim().toLowerCase();
+  const wrap = document.createElement("div");
+  wrap.className = "option-grid";
+  list.filter(item => !q || item.toLowerCase().includes(q)).forEach(item=>{
+    const btn = document.createElement("button");
+    btn.className = "option-btn" + (String(item) === String(modalTempValue) ? " active" : "");
+    btn.type = "button";
+    btn.textContent = item;
+    btn.addEventListener("click", ()=>{
+      modalTempValue = item;
+      renderOptionButtons(list);
+    });
+    wrap.appendChild(btn);
+  });
+  el.modalContent.innerHTML = "";
+  el.modalContent.appendChild(wrap);
+}
+function renderFieldSizeModal(){
+  el.modalContent.innerHTML = `<div class="number-wrap">
+      <input class="number-input" id="fieldSizeNumber" type="number" min="2" max="254" value="${modalTempValue}">
+      <button class="mini-btn" id="fieldMinus" type="button">-</button>
+      <button class="mini-btn" id="fieldPlus" type="button">+</button>
+    </div>`;
+  const input = document.getElementById("fieldSizeNumber");
+  document.getElementById("fieldMinus").addEventListener("click", ()=>{
+    let v = Number(input.value || 2);
+    v = Math.max(2, v - 1);
+    input.value = v;
+    modalTempValue = v;
+  });
+  document.getElementById("fieldPlus").addEventListener("click", ()=>{
+    let v = Number(input.value || 2);
+    v = Math.min(254, v + 1);
+    input.value = v;
+    modalTempValue = v;
+  });
+  input.addEventListener("input", ()=>{
+    let v = Number(input.value || 2);
+    if(v < 2) v = 2;
+    if(v > 254) v = 254;
+    modalTempValue = v;
+  });
+}
+function saveModal(){
+  if(modalType === "discipline") state.discipline = modalTempValue;
+  if(modalType === "structure") state.structure = modalTempValue;
+  if(modalType === "fieldSize") state.fieldSize = Math.max(2, Math.min(254, Number(modalTempValue || 2)));
+  closeModal();
+  updateSummary();
+  renderSeeds();
+}
+function closeModal(){ el.modal.classList.remove("show"); modalType = null; }
+
+function nextPowerOfTwo(n){ let p=1; while(p<n) p*=2; return p; }
+function seedPositions(size){
+  let arr=[1,2];
+  while(arr.length<size){
+    const total=arr.length*2+1;
+    const next=[];
+    arr.forEach(v=>{ next.push(v); next.push(total-v); });
+    arr=next;
+  }
+  return arr;
+}
+function buildKoOpening(playersRows){
+  const entrantCount = Math.min(playersRows.length, state.fieldSize || playersRows.length);
+  const entrants = playersRows.slice(0, entrantCount);
+  const bracketSize = nextPowerOfTwo(Math.max(2, entrantCount));
+  const matchCount = bracketSize / 2;
+  const byeCount = bracketSize - entrantCount;
+  const seedOrder = seedPositions(bracketSize);
+
+  const seeded = entrants.filter(p => p.seed_number !== null && p.seed_number !== "").sort((a,b)=>Number(a.seed_number)-Number(b.seed_number));
+  const unseeded = entrants.filter(p => !seeded.includes(p));
+  const priority = [...seeded, ...unseeded];
+
+  const opening = Array.from({length: matchCount}, (_, i) => ({
+    match_code:`A0/${i+1}`,
+    round_code:"A0",
+    bracket:"center",
+    stage_order:0,
+    position_order:i+1,
+    player1_id:null,
+    player2_id:null,
+    player1_name_snapshot:"",
+    player2_name_snapshot:"",
+    player1_club_snapshot:"",
+    player2_club_snapshot:"",
+    score1:null,
+    score2:null,
+    status:"ready",
+    winner_player_id:null,
+    loser_player_id:null
+  }));
+
+  const usedMatchIdx = new Set();
+  const byeRecipients = priority.slice(0, byeCount);
+
+  byeRecipients.forEach((player, idx) => {
+    let matchIdx = null;
+    let side = 0;
+    if(player.seed_number !== null && player.seed_number !== ""){
+      const pos = seedOrder.indexOf(Number(player.seed_number));
+      if(pos !== -1){
+        matchIdx = Math.floor(pos / 2);
+        side = pos % 2;
+      }
+    }
+    if(matchIdx === null || usedMatchIdx.has(matchIdx)){
+      const free = [];
+      for(let i=0;i<matchCount;i++) if(!usedMatchIdx.has(i)) free.push(i);
+      matchIdx = free[idx % free.length];
+      side = matchIdx % 2 === 0 ? 0 : 1;
+    }
+    usedMatchIdx.add(matchIdx);
+    if(side === 0){
+      opening[matchIdx].player1_id = player.id;
+      opening[matchIdx].player1_name_snapshot = player.name;
+      opening[matchIdx].player1_club_snapshot = player.club_city || "";
+      opening[matchIdx].player2_name_snapshot = "w.o.";
+      opening[matchIdx].player2_club_snapshot = "Voľný žreb";
+      opening[matchIdx].score1 = 1;
+      opening[matchIdx].score2 = 0;
+      opening[matchIdx].status = "finished";
+      opening[matchIdx].winner_player_id = player.id;
+    }else{
+      opening[matchIdx].player2_id = player.id;
+      opening[matchIdx].player2_name_snapshot = player.name;
+      opening[matchIdx].player2_club_snapshot = player.club_city || "";
+      opening[matchIdx].player1_name_snapshot = "w.o.";
+      opening[matchIdx].player1_club_snapshot = "Voľný žreb";
+      opening[matchIdx].score1 = 0;
+      opening[matchIdx].score2 = 1;
+      opening[matchIdx].status = "finished";
+      opening[matchIdx].winner_player_id = player.id;
+    }
+  });
+
+  const remaining = entrants.filter(p => !byeRecipients.includes(p));
+  let rp = 0;
+  for(let slot=0; slot<bracketSize; slot++){
+    const matchIdx = Math.floor(slot / 2);
+    const side = slot % 2;
+    if(usedMatchIdx.has(matchIdx)) continue;
+    if(rp >= remaining.length) break;
+    const player = remaining[rp];
+    if(side===0 && !opening[matchIdx].player1_id && !opening[matchIdx].player1_name_snapshot){
+      opening[matchIdx].player1_id = player.id;
+      opening[matchIdx].player1_name_snapshot = player.name;
+      opening[matchIdx].player1_club_snapshot = player.club_city || "";
+      rp++;
+    }else if(side===1 && !opening[matchIdx].player2_id && !opening[matchIdx].player2_name_snapshot){
+      opening[matchIdx].player2_id = player.id;
+      opening[matchIdx].player2_name_snapshot = player.name;
+      opening[matchIdx].player2_club_snapshot = player.club_city || "";
+      rp++;
+    }
+  }
+
+  opening.forEach(m => {
+    if(!m.player1_id && !m.player1_name_snapshot){
+      m.player1_name_snapshot = "w.o.";
+      m.player1_club_snapshot = "Voľný žreb";
+    }
+    if(!m.player2_id && !m.player2_name_snapshot){
+      m.player2_name_snapshot = "w.o.";
+      m.player2_club_snapshot = "Voľný žreb";
+    }
+  });
+
+  const filtered = opening.filter(m => !(m.player1_name_snapshot === "w.o." && m.player2_name_snapshot === "w.o."));
+  return { bracketSize, opening: filtered };
+}
+function buildSingleMatches(playersRows){
+  const { bracketSize, opening } = buildKoOpening(playersRows);
+  const out = [...opening];
+  let prev = "A0";
+  let cnt = bracketSize / 2;
+  let r = 1;
+  while(cnt > 1){
+    const next = cnt / 2;
+    const fin = next === 1;
+    for(let i=1;i<=next;i++){
+      out.push({
+        match_code:`${fin ? "FIN" : `A${r}`}/${i}`,
+        round_code:fin ? "FIN" : `A${r}`,
+        bracket:fin ? "final" : "winners",
+        stage_order:r,
+        position_order:i,
+        player1_id:null,
+        player2_id:null,
+        player1_name_snapshot:`Víťaz ${prev}/${(i*2)-1}`,
+        player2_name_snapshot:`Víťaz ${prev}/${i*2}`,
+        player1_club_snapshot:"",
+        player2_club_snapshot:"",
+        score1:null, score2:null, status:"ready",
+        winner_player_id:null, loser_player_id:null
+      });
+    }
+    prev = fin ? "FIN" : `A${r}`;
+    cnt = next;
+    r++;
+  }
+  return out;
+}
+function buildDoubleMatches(playersRows){
+  const { bracketSize, opening } = buildKoOpening(playersRows);
+  const out = [...opening];
+  const c = bracketSize / 2;
+  let prev = "A0", cnt = c, r = 1;
+  while(cnt > 1){
+    const next = cnt / 2;
+    for(let i=1;i<=next;i++){
+      out.push({
+        match_code:`A${r}/${i}`,
+        round_code:`A${r}`,
+        bracket:"winners",
+        stage_order:r,
+        position_order:i,
+        player1_id:null, player2_id:null,
+        player1_name_snapshot:`Víťaz ${prev}/${(i*2)-1}`,
+        player2_name_snapshot:`Víťaz ${prev}/${i*2}`,
+        player1_club_snapshot:"", player2_club_snapshot:"",
+        score1:null, score2:null, status:"ready",
+        winner_player_id:null, loser_player_id:null
+      });
+    }
+    prev = `A${r}`;
+    cnt = next;
+    r++;
+  }
+  for(let i=1;i<=Math.max(1, Math.floor(c/2));i++){
+    out.push({
+      match_code:`B1/${i}`,
+      round_code:"B1",
+      bracket:"losers",
+      stage_order:50,
+      position_order:i,
+      player1_id:null, player2_id:null,
+      player1_name_snapshot:`Porazený A0/${(i*2)-1}`,
+      player2_name_snapshot:`Porazený A0/${i*2}`,
+      player1_club_snapshot:"", player2_club_snapshot:"",
+      score1:null, score2:null, status:"ready",
+      winner_player_id:null, loser_player_id:null
+    });
+  }
+  out.push({
+    match_code:"FIN/1",
+    round_code:"FIN",
+    bracket:"final",
+    stage_order:99,
+    position_order:1,
+    player1_id:null, player2_id:null,
+    player1_name_snapshot:`Víťaz ${prev}/1`,
+    player2_name_snapshot:`Víťaz B1/1`,
+    player1_club_snapshot:"", player2_club_snapshot:"",
+    score1:null, score2:null, status:"ready",
+    winner_player_id:null, loser_player_id:null
+  });
+  return out;
+}
+function buildRoundRobinMatches(playersRows){
+  const matches = [];
+  let order = 1;
+  for(let i=0;i<playersRows.length;i++){
+    for(let j=i+1;j<playersRows.length;j++){
+      const p1 = playersRows[i], p2 = playersRows[j];
+      matches.push({
+        match_code:`RR/${order}`,
+        round_code:`RR`,
+        bracket:"round_robin",
+        stage_order:0,
+        position_order:order,
+        player1_id:p1.id, player2_id:p2.id,
+        player1_name_snapshot:p1.name, player2_name_snapshot:p2.name,
+        player1_club_snapshot:p1.club_city || "", player2_club_snapshot:p2.club_city || "",
+        score1:null, score2:null, status:"ready",
+        winner_player_id:null, loser_player_id:null
+      });
+      order++;
+    }
+  }
+  return matches;
+}
+
+async function startTournamentDb(){
+  hideBox(el.rightNotice); hideBox(el.rightError);
+  if(!supabaseClient){ showError(el.rightError,"Doplň SUPABASE_URL a SUPABASE_ANON_KEY."); return; }
+  if(!el.tournamentName.value.trim() || !el.location.value.trim() || !el.date.value || !el.time.value){
+    showError(el.rightError,"Vyplň názov turnaja, miesto, dátum a čas."); return;
+  }
+  if(state.players.length < 2){
+    showError(el.rightError,"Pridaj aspoň 2 hráčov."); return;
+  }
+
+  try{
+    const structureDb = structureDbMap[state.structure];
+    const { data: tournamentRow, error: tournamentError } = await supabaseClient
+      .from("tournaments")
+      .insert({
+        name: el.tournamentName.value.trim(),
+        sport: state.sport,
+        discipline: state.discipline,
+        structure: structureDb,
+        field_size: state.fieldSize,
+        location: el.location.value.trim(),
+        event_date: el.date.value,
+        event_time: el.time.value,
+        status: "active"
+      })
+      .select()
+      .single();
+
+    if(tournamentError) throw tournamentError;
+
+    const playersPayload = state.players.map((player, index) => ({
+      tournament_id: tournamentRow.id,
+      name: player.name,
+      club_city: "",
+      display_order: index + 1,
+      seed_number: player.seed === "" || player.seed === null || player.seed === undefined ? null : Number(player.seed)
+    }));
+
+    const { data: playerRows, error: playersError } = await supabaseClient
+      .from("tournament_players")
+      .insert(playersPayload)
+      .select();
+
+    if(playersError) throw playersError;
+
+    let matchPayload = [];
+    if(structureDb === "double_ko"){
+      matchPayload = buildDoubleMatches(playerRows);
+    }else if(structureDb === "single_ko" || structureDb === "groups_single_ko"){
+      matchPayload = buildSingleMatches(playerRows);
+    }else if(structureDb === "round_robin"){
+      matchPayload = buildRoundRobinMatches(playerRows);
+    }
+
+    if(matchPayload.length){
+      const { error: matchesError } = await supabaseClient
+        .from("matches")
+        .insert(matchPayload.map(m => ({...m, tournament_id: tournamentRow.id})));
+      if(matchesError) throw matchesError;
+    }
+
+    showNotice(el.rightNotice,"Turnaj bol uložený do databázy.");
+    el.previewBox.classList.add("show");
+    el.previewText.innerHTML = `Turnaj <strong>${el.tournamentName.value.trim()}</strong> bol vytvorený.<br>Presmerovanie na priebeh turnaja...`;
+    setTimeout(()=>{
+      window.location.href = `${PROGRESSION_FILE}?id=${tournamentRow.id}`;
+    }, 400);
+  }catch(err){
+    showError(el.rightError, err.message || "Nepodarilo sa vytvoriť turnaj v databáze.");
+  }
+}
+
+document.querySelectorAll(".switch-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".switch-btn").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    state.sport = btn.dataset.sport;
+    state.discipline = disciplineMap[state.sport][0];
+    hideBox(el.leftNotice); hideBox(el.leftError);
+    updateSummary();
+  });
+});
+document.getElementById("disciplineOpen").addEventListener("click", ()=>openModal("discipline"));
+document.getElementById("structureOpen").addEventListener("click", ()=>openModal("structure"));
+document.getElementById("fieldSizeOpen").addEventListener("click", ()=>openModal("fieldSize"));
+document.getElementById("closeModal").addEventListener("click", closeModal);
+document.getElementById("cancelModal").addEventListener("click", closeModal);
+document.getElementById("saveModal").addEventListener("click", saveModal);
+el.modalSearch.addEventListener("input", ()=>{
+  if(modalType === "discipline") renderOptionButtons(disciplineMap[state.sport]);
+  if(modalType === "structure") renderOptionButtons(structureOptions);
+});
+
+document.getElementById("addPlayerBtn").addEventListener("click", ()=>{
+  hideBox(el.leftNotice); hideBox(el.leftError);
+  const result = addPlayer(document.getElementById("singlePlayer").value);
+  if(!result.ok){showError(el.leftError,result.message);return;}
+  document.getElementById("singlePlayer").value = "";
+  renderPlayers();
+  showNotice(el.leftNotice,"Hráč bol pridaný.");
+});
+document.getElementById("clearSingleBtn").addEventListener("click", ()=>{
+  document.getElementById("singlePlayer").value = "";
+  hideBox(el.leftNotice); hideBox(el.leftError);
+});
+document.getElementById("bulkAddBtn").addEventListener("click", ()=>{
+  hideBox(el.leftNotice); hideBox(el.leftError);
+  const lines = document.getElementById("bulkPlayers").value.split(/\n|,/).map(v=>v.trim()).filter(Boolean);
+  if(!lines.length){showError(el.leftError,"Nie je zadaný žiadny hráč na hromadné vloženie.");return;}
+  let added = 0; const skipped = [];
+  lines.forEach(name=>{const result = addPlayer(name); if(result.ok) added++; else skipped.push(name);});
+  document.getElementById("bulkPlayers").value = "";
+  renderPlayers();
+  showNotice(el.leftNotice, skipped.length ? `Pridaných ${added} hráčov. Preskočené duplicity: ${skipped.join(", ")}` : `Pridaných ${added} hráčov.`);
+});
+document.getElementById("sampleBtn").addEventListener("click", ()=>{
+  document.getElementById("bulkPlayers").value =
+    state.sport === "billiard" ? "Martin Novák\nPeter Kováč\nJán Bielik\nMarek Sýkora\nLukáš Bartoš\nTomáš Hronec\nSamuel Tóth" :
+    state.sport === "darts" ? "Ján Novák\nPeter Kováč\nMartin Horváth\nRoman Baláž\nFilip Urban\nSamuel Tóth\nMarek Bielik" :
+    "Marek Urban\nPeter Bielik\nRoman Tóth\nJán Baláž\nFilip Kováč\nSamuel Novák";
+});
+document.getElementById("clearPlayersBtn").addEventListener("click", ()=>{
+  state.players = [];
+  renderPlayers();
+  showNotice(el.leftNotice,"Zoznam hráčov bol vymazaný.");
+});
+el.playerList.addEventListener("click", e=>{
+  const btn = e.target.closest("[data-remove]");
+  if(!btn) return;
+  state.players.splice(Number(btn.dataset.remove), 1);
+  renderPlayers();
+  showNotice(el.leftNotice,"Hráč bol odstránený.");
+});
+el.seedList.addEventListener("change", e=>{
+  const select = e.target.closest("[data-seed-index]");
+  if(!select) return;
+  const idx = Number(select.dataset.seedIndex);
+  const val = select.value;
+  if(val !== ""){
+    state.players.forEach((p,i)=>{
+      if(i !== idx && String(p.seed) === String(val)) p.seed = "";
+    });
+  }
+  state.players[idx].seed = val === "" ? "" : Number(val);
+  renderSeeds();
+  updateSummary();
+  showNotice(el.leftNotice,"Seedovanie bolo upravené.");
+});
+[el.tournamentName,el.location,el.date,el.time].forEach(input=>{
+  input.addEventListener("input", updateSummary);
+  input.addEventListener("change", updateSummary);
+});
+document.getElementById("draftBtn").addEventListener("click", ()=>{
+  hideBox(el.rightNotice); hideBox(el.rightError);
+  showNotice(el.rightNotice,"Koncept turnaja bol uložený.");
+  el.previewBox.classList.add("show");
+  el.previewText.textContent = `Koncept ${el.tournamentName.value.trim() || "Bez názvu"} bol uložený.`;
+});
+document.getElementById("startBtn").addEventListener("click", startTournamentDb);
+
+renderPlayers();
+updateSummary();
+</script>
+</body>
+</html>

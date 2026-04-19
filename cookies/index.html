@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cardscorespro – Cookies</title>
+  <style>
+    :root{
+      --bg:#050505; --bg2:#0b0b0b; --line:rgba(255,255,255,.08); --lineSoft:rgba(255,255,255,.05);
+      --text:#f4f4f4; --muted:#a7a7a7; --gold:#d8b04b; --shadow:0 20px 60px rgba(0,0,0,.34);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      min-height:100vh;
+      font-family:Inter,Arial,Helvetica,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 24%),
+        linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+    }
+    a{text-decoration:none;color:inherit}
+    .page{width:min(1100px,calc(100% - 32px));margin:20px auto 36px;display:grid;gap:18px}
+    .panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
+    .topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 18px}
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand-mark{width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em}
+    .brand-title{font-size:1.35rem;font-weight:900;letter-spacing:-.04em}
+    .brand-title .gold{color:var(--gold)} .brand-title .white{color:#fff}
+    .hero,.content,.toc{padding:22px}
+    h1,h2,p{margin:0}
+    h1{color:var(--gold);font-size:clamp(2rem,4vw,3.4rem);line-height:1.02;letter-spacing:-.05em}
+    h2{color:var(--gold);font-size:1.24rem;letter-spacing:-.03em;margin-bottom:10px}
+    p{color:var(--muted);line-height:1.65;font-size:.98rem}
+    .hero{display:grid;gap:14px}
+    .kicker{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;width:max-content;border-radius:999px;border:1px solid rgba(216,176,75,.18);background:rgba(216,176,75,.08);color:var(--gold);font-size:.78rem;font-weight:900}
+    .meta{display:grid;gap:8px;margin-top:6px}
+    .meta div,.toc-list a,.list div{
+      padding:12px 14px;border-radius:16px;border:1px solid var(--lineSoft);background:rgba(255,255,255,.02);color:#ddd;font-size:.94rem;
+    }
+    .toc-list,.content,.list{display:grid;gap:10px}
+    .content{gap:18px}
+    .section{padding:18px;border:1px solid var(--lineSoft);border-radius:22px;background:rgba(255,255,255,.02);display:grid;gap:10px}
+    .section p{white-space:pre-line}
+    .footer{padding:18px 22px;color:var(--muted);font-size:.9rem}
+    @media (max-width:760px){.page{width:min(100%,calc(100% - 20px))}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="panel topbar">
+      <div class="brand">
+        <div class="brand-mark">CSP</div>
+        <div class="brand-title"><span class="gold">CardScores</span><span class="white">Pro</span></div>
+      </div>
+    </header>
+
+    <section class="panel hero">
+      <div class="kicker">Právne informácie</div>
+      <h1>Cookies</h1>
+      <p>Informácie o používaní cookies a podobných technológií pre službu Cardscorespro. Identifikačné údaje a dátum účinnosti doplníš pred spustením webu.</p>
+      <div class="meta">
+        <div><strong>Prevádzkovateľ:</strong> Cardscorespro</div>
+        <div><strong>Sídlo / miesto podnikania:</strong> [DOPLNIŤ]</div>
+        <div><strong>IČO:</strong> [DOPLNIŤ]</div>
+        <div><strong>Kontaktný e-mail:</strong> [DOPLNIŤ]</div>
+        <div><strong>Účinnosť od:</strong> [DOPLNIŤ DÁTUM]</div>
+      </div>
+    </section>
+
+    <section class="panel toc">
+      <h2>Obsah</h2>
+      <div class="toc-list">
+        <a href="#co-su-cookies">1. Čo sú cookies</a>
+        <a href="#kto-pouziva">2. Kto používa cookies</a>
+        <a href="#ucely">3. Na aké účely používame cookies</a>
+        <a href="#typy">4. Aké typy cookies môžeme používať</a>
+        <a href="#pravny-zaklad">5. Právny základ používania cookies</a>
+        <a href="#sprava">6. Ako môže používateľ spravovať cookies</a>
+        <a href="#uchovavanie">7. Doba uchovávania cookies</a>
+        <a href="#tretie-strany">8. Tretie strany</a>
+        <a href="#osobne-udaje">9. Súvis s ochranou osobných údajov</a>
+        <a href="#zmeny">10. Zmeny tejto cookies politiky</a>
+        <a href="#kontakt">11. Kontakt</a>
+      </div>
+    </section>
+
+    <section class="panel content">
+      <div class="section" id="co-su-cookies">
+        <h2>1. Čo sú cookies</h2>
+        <p>Cookies sú malé textové súbory, ktoré sa ukladajú do zariadenia používateľa pri návšteve webovej stránky alebo pri používaní online služby. Cookies môžu slúžiť na základné fungovanie webu, zapamätanie si nastavení, analýzu návštevnosti, meranie výkonu a prípadne na marketingové alebo reklamné účely.
+
+Cookies môžu byť dočasné alebo trvalé.</p>
+      </div>
+
+      <div class="section" id="kto-pouziva">
+        <h2>2. Kto používa cookies</h2>
+        <div class="list">
+          <div><strong>Prevádzkovateľ:</strong> Cardscorespro</div>
+          <div><strong>Sídlo / miesto podnikania:</strong> [DOPLNIŤ]</div>
+          <div><strong>IČO:</strong> [DOPLNIŤ]</div>
+          <div><strong>E-mail:</strong> [DOPLNIŤ]</div>
+        </div>
+      </div>
+
+      <div class="section" id="ucely">
+        <h2>3. Na aké účely používame cookies</h2>
+        <p>Na webovej stránke môžeme používať cookies najmä na tieto účely:
+
+3.1. Nevyhnutné cookies
+Tieto cookies sú potrebné na základné fungovanie webovej stránky, bezpečné používanie služby, navigáciu medzi stránkami a zabezpečenie technických funkcií webu.
+
+3.2. Funkčné cookies
+Tieto cookies umožňujú zapamätať si voľby používateľa, napríklad jazyk, niektoré nastavenia rozhrania alebo ďalšie preferencie.
+
+3.3. Analytické cookies
+Tieto cookies pomáhajú pochopiť, ako návštevníci používajú webovú stránku, ktoré sekcie sú navštevované a ako možno službu zlepšovať.
+
+3.4. Marketingové a reklamné cookies
+Ak budú na webovej stránke používané marketingové alebo reklamné cookies, budú slúžiť najmä na zobrazovanie relevantného obsahu, meranie kampaní alebo propagáciu udalostí, klubov a partnerov.</p>
+      </div>
+
+      <div class="section" id="typy">
+        <h2>4. Aké typy cookies môžeme používať</h2>
+        <p>Na webovej stránke môžu byť používané:
+- cookies prvej strany, ktoré nastavuje priamo Cardscorespro,
+- cookies tretích strán, ktoré nastavujú externí partneri alebo poskytovatelia nástrojov.
+
+Do tejto kategórie môžu patriť napríklad nástroje na analytiku, meranie výkonu, reklamné systémy alebo funkčné rozšírenia webu.</p>
+      </div>
+
+      <div class="section" id="pravny-zaklad">
+        <h2>5. Právny základ používania cookies</h2>
+        <p>5.1. Nevyhnutné cookies
+Nevyhnutné cookies môžu byť používané bez osobitného súhlasu používateľa, ak sú potrebné na fungovanie webu alebo poskytovanie požadovanej služby.
+
+5.2. Ostatné cookies
+Funkčné, analytické, marketingové a reklamné cookies, ktoré nie sú nevyhnutné, budú používané len na príslušnom právnom základe a tam, kde je to potrebné, až po udelení súhlasu používateľa prostredníctvom cookies lišty alebo nastavenia cookies.</p>
+      </div>
+
+      <div class="section" id="sprava">
+        <h2>6. Ako môže používateľ spravovať cookies</h2>
+        <p>Používateľ môže nastavenie cookies spravovať najmä:
+- prostredníctvom cookies lišty alebo centra nastavení cookies na webovej stránke,
+- prostredníctvom nastavení svojho internetového prehliadača,
+- vymazaním už uložených cookies vo svojom zariadení.
+
+Vypnutie alebo blokovanie niektorých typov cookies môže ovplyvniť funkčnosť webovej stránky alebo niektorých jej častí.</p>
+      </div>
+
+      <div class="section" id="uchovavanie">
+        <h2>7. Doba uchovávania cookies</h2>
+        <p>Doba uchovávania cookies závisí od ich typu a účelu.
+
+Niektoré cookies sa uchovávajú len počas trvania relácie používateľa, iné môžu zostať uložené aj po ukončení návštevy webovej stránky na obdobie potrebné na splnenie svojho účelu.</p>
+      </div>
+
+      <div class="section" id="tretie-strany">
+        <h2>8. Tretie strany</h2>
+        <p>Ak budú na webovej stránke používané cookies tretích strán, tieto cookies sa môžu riadiť aj podmienkami a zásadami ochrany osobných údajov príslušných tretích strán.
+
+Prevádzkovateľ odporúča používateľovi oboznámiť sa aj s politikami ochrany osobných údajov a cookies politikami týchto partnerov, ak budú na platforme používaní.</p>
+      </div>
+
+      <div class="section" id="osobne-udaje">
+        <h2>9. Súvis s ochranou osobných údajov</h2>
+        <p>Používanie cookies môže zahŕňať aj spracúvanie osobných údajov, najmä ak cookies umožňujú identifikovať používateľa alebo jeho zariadenie priamo alebo nepriamo.
+
+Podrobnosti o spracúvaní osobných údajov sú uvedené v samostatnom dokumente Ochrana osobných údajov.</p>
+      </div>
+
+      <div class="section" id="zmeny">
+        <h2>10. Zmeny tejto cookies politiky</h2>
+        <p>Prevádzkovateľ si vyhradzuje právo túto cookies politiku meniť alebo dopĺňať.
+
+Aktuálne znenie bude vždy zverejnené na webovej stránke služby Cardscorespro.
+
+Ak dôjde k významnej zmene, prevádzkovateľ môže používateľov primeraným spôsobom informovať.</p>
+      </div>
+
+      <div class="section" id="kontakt">
+        <h2>11. Kontakt</h2>
+        <div class="list">
+          <div><strong>Prevádzkovateľ:</strong> Cardscorespro</div>
+          <div><strong>E-mail:</strong> [DOPLNIŤ]</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="panel footer">
+      Cardscorespro • cookies • draft na doplnenie finálnych identifikačných údajov
+    </footer>
+  </div>
+</body>
+</html>

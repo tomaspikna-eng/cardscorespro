@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSP – Bowling</title>
+<style>
+:root{
+  --bg:#050505;--bg2:#0b0b0b;--line:rgba(255,255,255,.08);--line-soft:rgba(255,255,255,.05);
+  --text:#f4f4f4;--muted:#a7a7a7;--gold:#d8b04b;--green:#22d36b;--blue:#6ea8ff;--shadow:0 20px 60px rgba(0,0,0,.34)
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{
+  min-height:100vh;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--text);
+  background:radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 26%), linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+}
+.page{width:min(1480px,calc(100% - 32px));margin:24px auto 40px;display:grid;gap:18px}
+.panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
+.hero,.panel-inner{padding:18px}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900}
+.hero-title h1{margin:0 0 6px;font-size:2rem;letter-spacing:-.05em;color:var(--gold);line-height:1}
+.hero-title p{margin:0;color:var(--muted);font-size:.95rem}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{min-height:46px;padding:0 16px;border:none;border-radius:14px;font:inherit;font-weight:900;cursor:pointer}
+.btn-green{background:var(--green);color:#06230f}
+.btn-dark{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
+.btn-blue{background:rgba(110,168,255,.14);color:#d7e8ff;border:1px solid rgba(110,168,255,.22)}
+.top-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+.card{border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.02);padding:16px}
+.player-head{display:grid;grid-template-columns:140px 1fr;gap:16px;align-items:center}
+.avatar-wrap{width:130px;height:130px;border-radius:50%;padding:5px;background:linear-gradient(135deg,var(--gold),rgba(110,168,255,.95));box-shadow:0 0 0 1px rgba(216,176,75,.24)}
+.avatar-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;background:#0a0a0a}
+.player-name{margin:0;font-size:1.8rem;letter-spacing:-.04em;color:var(--gold)}
+.player-meta{margin:6px 0 0;color:var(--muted)}
+.tag-row,.mini-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.tag{display:inline-flex;align-items:center;min-height:30px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:#ddd;font-size:.78rem;font-weight:800}
+.tag.gold{color:var(--gold);border-color:rgba(216,176,75,.22);background:rgba(216,176,75,.08)}
+.tag.green{color:#c8ffdc;border-color:rgba(34,211,107,.24);background:rgba(34,211,107,.10)}
+.section-title{margin:0 0 12px;font-size:1.04rem;color:var(--gold)}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.stat,.status-box{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.stat small,.status-box small,.label{display:block;color:#8f8f8f;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.stat strong,.status-box strong{display:block;font-size:1.08rem}
+.input,.select{width:100%;min-height:46px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--text);padding:0 14px;outline:none;font:inherit}
+.scoreboard-wrap{overflow:auto;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.02)}
+.scoreboard{width:100%;border-collapse:collapse;min-width:1280px}
+.scoreboard th,.scoreboard td{border-bottom:1px solid var(--line-soft);border-right:1px solid var(--line-soft);text-align:center;padding:10px}
+.scoreboard thead th{background:rgba(0,0,0,.22);color:#8f8f8f;font-size:.74rem;text-transform:uppercase;letter-spacing:.12em}
+.scoreboard .name-col{min-width:180px;text-align:left;padding-left:16px}
+.frame-head{color:var(--gold);font-weight:900}
+.ball-input{
+  width:60px;height:44px;border-radius:12px;border:1px solid var(--line);
+  background:rgba(255,255,255,.03);color:var(--text);text-align:center;font:inherit;font-weight:900
+}
+.ball-input:focus{outline:none;border-color:rgba(216,176,75,.3);background:rgba(255,255,255,.05)}
+.total-cell{font-weight:900;color:var(--gold);font-size:1.1rem}
+.activity-list{display:grid;gap:10px}
+.activity-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.activity-row h3{margin:0 0 4px;font-size:1rem;color:var(--text)}
+.activity-row p{margin:0;color:var(--muted);font-size:.9rem}
+@media (max-width:1200px){.top-grid,.grid-2{grid-template-columns:1fr}.grid-4{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:760px){.player-head,.grid-4{grid-template-columns:1fr}.hero-title h1,.player-name{font-size:1.7rem}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<section class="panel hero">
+  <div class="hero-top">
+    <div class="brand">
+      <div class="brand-mark">CSP</div>
+      <div class="hero-title">
+        <h1>Bowling</h1>
+        <p>Tomáš Pikna</p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button class="btn btn-green">Spustiť hru</button>
+      <button class="btn btn-dark">Uložiť hru</button>
+      <button class="btn btn-blue">Prehľad hier</button>
+    </div>
+  </div>
+</section>
+
+<div class="top-grid">
+  <section class="panel">
+    <div class="panel-inner">
+      <div class="player-head">
+        <div class="avatar-wrap"><img src="a_digital_illustration_showcases_a_billiard_8_ball.png" alt="Avatar hráča"></div>
+        <div>
+          <h2 class="player-name">Tomáš Pikna</h2>
+          <p class="player-meta">Bowling • Hra 1</p>
+          <div class="tag-row">
+            <span class="tag gold">Aktívna hra</span>
+            <span class="tag green">Skóre sa počíta automaticky</span>
+            <span class="tag">Dráha 3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-inner">
+      <h2 class="section-title">Rýchly stav</h2>
+      <div class="grid-2">
+        <div class="stat"><small>Disciplína</small><strong>Bowling</strong></div>
+        <div class="stat"><small>Počet hráčov</small><strong>2</strong></div>
+        <div class="stat"><small>Aktívny frame</small><strong id="activeFrame">1</strong></div>
+        <div class="stat"><small>Najvyššie skóre</small><strong id="topScore">0</strong></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="panel">
+  <div class="panel-inner">
+    <h2 class="section-title">Nastavenie hry</h2>
+    <div class="grid-4">
+      <div>
+        <label class="label">Disciplína</label>
+        <select class="select">
+          <option selected>Bowling</option>
+          <option>Kolky</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Počet hráčov</label>
+        <select class="select">
+          <option>1</option>
+          <option selected>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Číslo dráhy</label>
+        <input class="input" value="3" />
+      </div>
+      <div>
+        <label class="label">Názov hry</label>
+        <input class="input" value="Večerný tréning" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-inner">
+    <h2 class="section-title">Skóre</h2>
+    <div class="scoreboard-wrap">
+      <table class="scoreboard">
+        <thead>
+          <tr>
+            <th class="name-col">Hráč</th>
+            <th colspan="2" class="frame-head">1</th>
+            <th colspan="2" class="frame-head">2</th>
+            <th colspan="2" class="frame-head">3</th>
+            <th colspan="2" class="frame-head">4</th>
+            <th colspan="2" class="frame-head">5</th>
+            <th colspan="2" class="frame-head">6</th>
+            <th colspan="2" class="frame-head">7</th>
+            <th colspan="2" class="frame-head">8</th>
+            <th colspan="2" class="frame-head">9</th>
+            <th colspan="3" class="frame-head">10</th>
+            <th class="frame-head">Spolu</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-player="0">
+            <td class="name-col">Tomáš Pikna</td>
+            <td><input class="ball-input" data-player="0" data-frame="1" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="1" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="2" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="2" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="3" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="3" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="4" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="4" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="5" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="5" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="6" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="6" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="7" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="7" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="8" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="8" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="9" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="9" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="10" data-ball="1"></td>
+            <td><input class="ball-input" data-player="0" data-frame="10" data-ball="2"></td>
+            <td><input class="ball-input" data-player="0" data-frame="10" data-ball="3"></td>
+            <td class="total-cell" id="total0">0</td>
+          </tr>
+          <tr data-player="1">
+            <td class="name-col">Tréningový súper</td>
+            <td><input class="ball-input" data-player="1" data-frame="1" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="1" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="2" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="2" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="3" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="3" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="4" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="4" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="5" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="5" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="6" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="6" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="7" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="7" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="8" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="8" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="9" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="9" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="10" data-ball="1"></td>
+            <td><input class="ball-input" data-player="1" data-frame="10" data-ball="2"></td>
+            <td><input class="ball-input" data-player="1" data-frame="10" data-ball="3"></td>
+            <td class="total-cell" id="total1">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mini-actions" style="margin-top:12px">
+      <button class="btn btn-dark" id="clearGameBtn">Vymazať hru</button>
+      <button class="btn btn-blue" id="saveGameBtn">Uložiť hru</button>
+    </div>
+  </div>
+</section>
+
+<div class="grid-2">
+  <section class="panel">
+    <div class="panel-inner">
+      <h2 class="section-title">Posledné hry</h2>
+      <div class="activity-list">
+        <div class="activity-row"><div><h3>Večerný tréning</h3><p>Bowling • 184 bodov • včera</p></div><button class="btn btn-blue">Detail</button></div>
+        <div class="activity-row"><div><h3>Dráha 5 - Sobota</h3><p>Bowling • 201 bodov • minulý týždeň</p></div><button class="btn btn-blue">Detail</button></div>
+        <div class="activity-row"><div><h3>Ranná hra</h3><p>Kolky • 167 bodov • minulý týždeň</p></div><button class="btn btn-blue">Detail</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-inner">
+      <h2 class="section-title">Prehľad</h2>
+      <div class="stat"><small>Skóre sa počíta</small><strong>Automaticky pri každom zápise</strong></div>
+    </div>
+  </section>
+</div>
+
+</div>
+
+<script>
+function n(v){
+  if(v === "" || v == null) return null;
+  const x = Number(v);
+  if(Number.isNaN(x)) return null;
+  return Math.max(0, Math.min(10, x));
+}
+
+function getFrameValues(player){
+  const frames = [];
+  for(let f=1; f<=10; f++){
+    const a = document.querySelector(`[data-player="${player}"][data-frame="${f}"][data-ball="1"]`);
+    const b = document.querySelector(`[data-player="${player}"][data-frame="${f}"][data-ball="2"]`);
+    const c = document.querySelector(`[data-player="${player}"][data-frame="${f}"][data-ball="3"]`);
+    frames.push({
+      a: n(a?.value),
+      b: n(b?.value),
+      c: n(c?.value),
+      aEl: a, bEl: b, cEl: c
+    });
+  }
+  return frames;
+}
+
+function flattenRolls(frames){
+  const rolls = [];
+  for(let i=0; i<9; i++){
+    const f = frames[i];
+    if(f.a == null) break;
+    rolls.push(f.a);
+    if(f.a !== 10){
+      if(f.b == null) break;
+      rolls.push(f.b);
+    }
+  }
+  const t = frames[9];
+  if(t.a != null) rolls.push(t.a);
+  if(t.b != null) rolls.push(t.b);
+  if(t.c != null) rolls.push(t.c);
+  return rolls;
+}
+
+function scoreFrames(frames){
+  const rolls = flattenRolls(frames);
+  let score = 0;
+  let ri = 0;
+  for(let frame=0; frame<10; frame++){
+    if(ri >= rolls.length) break;
+    if(frame < 9){
+      const first = rolls[ri];
+      if(first === 10){
+        if(ri + 2 >= rolls.length) break;
+        score += 10 + rolls[ri+1] + rolls[ri+2];
+        ri += 1;
+      } else {
+        if(ri + 1 >= rolls.length) break;
+        const second = rolls[ri+1];
+        const frameSum = first + second;
+        if(frameSum === 10){
+          if(ri + 2 >= rolls.length) break;
+          score += 10 + rolls[ri+2];
+        } else {
+          score += frameSum;
+        }
+        ri += 2;
+      }
+    } else {
+      const first = rolls[ri] ?? 0;
+      const second = rolls[ri+1] ?? 0;
+      const third = rolls[ri+2] ?? 0;
+      if(rolls.length <= ri + 1) break;
+      score += first + second + third;
+      break;
+    }
+  }
+  return score;
+}
+
+function activeFrame(frames){
+  for(let i=0; i<9; i++){
+    const f = frames[i];
+    if(f.a == null) return i+1;
+    if(f.a !== 10 && f.b == null) return i+1;
+  }
+  const t = frames[9];
+  if(t.a == null || t.b == null) return 10;
+  const needsThird = t.a === 10 || (t.a ?? 0) + (t.b ?? 0) === 10;
+  if(needsThird && t.c == null) return 10;
+  return 10;
+}
+
+function validateFrames(frames){
+  for(let i=0; i<9; i++){
+    const f = frames[i];
+    if(f.a != null && f.a === 10){
+      if(f.b != null && f.b !== 0) f.bEl.value = "";
+    }
+    if(f.a != null && f.a < 10 && f.b != null && f.a + f.b > 10){
+      f.bEl.value = Math.max(0, 10 - f.a);
+    }
+  }
+  const t = frames[9];
+  if(t.a != null && t.a < 10 && t.b != null && t.a + t.b > 10){
+    t.bEl.value = Math.max(0, 10 - t.a);
+  }
+}
+
+function recalc(){
+  const totals = [];
+  for(let p=0; p<2; p++){
+    let frames = getFrameValues(p);
+    validateFrames(frames);
+    frames = getFrameValues(p);
+    const total = scoreFrames(frames);
+    totals.push(total);
+    document.getElementById("total" + p).textContent = total;
+  }
+  document.getElementById("topScore").textContent = Math.max(...totals);
+  document.getElementById("activeFrame").textContent = activeFrame(getFrameValues(0));
+}
+
+document.querySelectorAll(".ball-input").forEach(input=>{
+  input.addEventListener("input", ()=>{
+    const value = n(input.value);
+    input.value = value == null ? "" : value;
+    recalc();
+  });
+});
+
+document.getElementById("clearGameBtn").addEventListener("click", ()=>{
+  document.querySelectorAll(".ball-input").forEach(i => i.value = "");
+  recalc();
+});
+
+document.getElementById("saveGameBtn").addEventListener("click", ()=>{
+  const payload = [0,1].map(p => {
+    const frames = getFrameValues(p);
+    return {
+      player: document.querySelector(`tr[data-player="${p}"] .name-col`).textContent.trim(),
+      total: scoreFrames(frames),
+      frames: frames.map(f => ({a:f.a,b:f.b,c:f.c}))
+    };
+  });
+  localStorage.setItem("csp_bowling_game", JSON.stringify(payload));
+});
+
+recalc();
+</script>
+</body>
+</html>

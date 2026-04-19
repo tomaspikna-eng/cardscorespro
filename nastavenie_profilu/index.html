@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSP – Nastavenie profilu</title>
+<style>
+:root{
+  --bg:#050505;--bg2:#0b0b0b;--line:rgba(255,255,255,.08);--line-soft:rgba(255,255,255,.05);
+  --text:#f4f4f4;--muted:#a7a7a7;--gold:#d8b04b;--green:#22d36b;--shadow:0 20px 60px rgba(0,0,0,.34)
+}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{
+  min-height:100vh;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--text);
+  background:radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 26%),linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%)
+}
+.page{width:min(980px,calc(100% - 32px));margin:28px auto 40px;display:grid;gap:18px}
+.panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
+.hero{padding:22px;display:grid;gap:16px}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em}
+.hero-title h1{margin:0 0 6px;font-size:2rem;letter-spacing:-.05em;color:var(--gold);line-height:1}
+.hero-title p{margin:0;color:var(--muted);font-size:.95rem}
+.state-box{min-width:220px;padding:14px 16px;border-radius:18px;border:1px solid rgba(34,211,107,.18);background:linear-gradient(180deg, rgba(34,211,107,.12), rgba(34,211,107,.06))}
+.state-box small{display:block;color:#9ed8b7;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.state-box strong{color:#c8ffdc;font-size:1.04rem}
+.panel-inner{padding:18px}
+.layout{display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start}
+.card{border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.02);padding:16px}
+.avatar-card{display:grid;gap:14px;justify-items:center;text-align:center}
+.avatar-wrap{width:150px;height:150px;border-radius:50%;padding:5px;background:linear-gradient(135deg,var(--gold),rgba(110,168,255,.95));box-shadow:0 0 0 1px rgba(216,176,75,.24)}
+.avatar-wrap img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;background:#0a0a0a}
+.tag{display:inline-flex;align-items:center;min-height:30px;padding:0 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:#ddd;font-size:.78rem;font-weight:800}
+.tag.gold{color:var(--gold);border-color:rgba(216,176,75,.22);background:rgba(216,176,75,.08)}
+.form-grid{display:grid;gap:12px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.label{display:block;margin:0 0 6px;color:#8f8f8f;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.input,.select,.textarea{
+  width:100%;min-height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--text);outline:none;font:inherit
+}
+.textarea{min-height:110px;padding:14px;resize:vertical}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.info-box{padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.info-box small{display:block;color:#8f8f8f;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.info-box strong{display:block;font-size:1rem}
+.actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:8px}
+.btn{min-height:44px;padding:0 14px;border:none;border-radius:14px;font:inherit;font-weight:900;cursor:pointer}
+.btn-green{background:var(--green);color:#06230f}
+.btn-dark{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
+.note{padding:12px 14px;border-radius:14px;background:rgba(216,176,75,.07);border:1px solid rgba(216,176,75,.16);color:#ead7a2;font-size:.9rem}
+@media (max-width:860px){
+  .layout{grid-template-columns:1fr}
+  .two,.info-grid{grid-template-columns:1fr}
+  .hero-title h1{font-size:1.7rem}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <section class="panel hero">
+    <div class="hero-top">
+      <div class="brand">
+        <div class="brand-mark">CSP</div>
+        <div class="hero-title">
+          <h1>Nastavenie profilu</h1>
+          <p>Prvý krok po registrácii. Vyplň základné údaje hráča.</p>
+        </div>
+      </div>
+      <div class="state-box">
+        <small>Stav profilu</small>
+        <strong>Základné údaje</strong>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-inner">
+      <div class="layout">
+
+        <div class="card avatar-card">
+          <div class="avatar-wrap">
+            <img src="a_digital_illustration_showcases_a_billiard_8_ball.png" alt="Dočasný avatar">
+          </div>
+          <div class="tag gold">Dočasný avatar</div>
+          <div class="note">
+            Zatiaľ používame billiardovú guľu 8 ako profilový avatar. Neskôr si ho používateľ môže zmeniť.
+          </div>
+          <button class="btn btn-dark" type="button">Zmeniť avatar</button>
+        </div>
+
+        <div class="card">
+          <div class="info-grid" style="margin-bottom:14px">
+            <div class="info-box">
+              <small>Krok</small>
+              <strong>1 / 1</strong>
+            </div>
+            <div class="info-box">
+              <small>Typ účtu</small>
+              <strong>Hráč</strong>
+            </div>
+            <div class="info-box">
+              <small>Cieľ</small>
+              <strong>Dokončiť profil</strong>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="two">
+              <div>
+                <label class="label">Meno / prezývka</label>
+                <input class="input" value="Tomáš Pikna" />
+              </div>
+              <div>
+                <label class="label">Klub</label>
+                <input class="input" value="Moment Club" />
+              </div>
+            </div>
+
+            <div class="two">
+              <div>
+                <label class="label">Mesto</label>
+                <input class="input" value="Kanianka" />
+              </div>
+              <div>
+                <label class="label">Krajina</label>
+                <input class="input" value="Slovensko" />
+              </div>
+            </div>
+
+            <div class="two">
+              <div>
+                <label class="label">Hlavný šport</label>
+                <select class="select">
+                  <option selected>Biliard</option>
+                  <option>Šípky</option>
+                  <option>Bowling</option>
+                </select>
+              </div>
+              <div>
+                <label class="label">Disciplína</label>
+                <select class="select">
+                  <option selected>8-Ball</option>
+                  <option>9-Ball</option>
+                  <option>10-Ball</option>
+                  <option>Blackball</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="label">Krátky profilový popis</label>
+              <textarea class="textarea" placeholder="Napíš krátky profil hráča...">Hráč z regiónu Prievidza so zameraním na biliard a turnajové hranie.</textarea>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-dark" type="button">Preskočiť zatiaľ</button>
+              <button class="btn btn-green" type="button">Uložiť profil</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

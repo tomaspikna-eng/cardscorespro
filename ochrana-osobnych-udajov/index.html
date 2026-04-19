@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cardscorespro – Ochrana osobných údajov</title>
+  <style>
+    :root{
+      --bg:#050505; --bg2:#0b0b0b; --line:rgba(255,255,255,.08); --lineSoft:rgba(255,255,255,.05);
+      --text:#f4f4f4; --muted:#a7a7a7; --gold:#d8b04b; --shadow:0 20px 60px rgba(0,0,0,.34);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      min-height:100vh;
+      font-family:Inter,Arial,Helvetica,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 24%),
+        linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+    }
+    a{text-decoration:none;color:inherit}
+    .page{width:min(1100px,calc(100% - 32px));margin:20px auto 36px;display:grid;gap:18px}
+    .panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
+    .topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 18px}
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand-mark{width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em}
+    .brand-title{font-size:1.35rem;font-weight:900;letter-spacing:-.04em}
+    .brand-title .gold{color:var(--gold)} .brand-title .white{color:#fff}
+    .hero,.content,.toc{padding:22px}
+    h1,h2,p{margin:0}
+    h1{color:var(--gold);font-size:clamp(2rem,4vw,3.4rem);line-height:1.02;letter-spacing:-.05em}
+    h2{color:var(--gold);font-size:1.24rem;letter-spacing:-.03em;margin-bottom:10px}
+    p{color:var(--muted);line-height:1.65;font-size:.98rem}
+    .hero{display:grid;gap:14px}
+    .kicker{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;width:max-content;border-radius:999px;border:1px solid rgba(216,176,75,.18);background:rgba(216,176,75,.08);color:var(--gold);font-size:.78rem;font-weight:900}
+    .meta{display:grid;gap:8px;margin-top:6px}
+    .meta div,.toc-list a,.list div{
+      padding:12px 14px;border-radius:16px;border:1px solid var(--lineSoft);background:rgba(255,255,255,.02);color:#ddd;font-size:.94rem;
+    }
+    .toc-list,.content,.list{display:grid;gap:10px}
+    .content{gap:18px}
+    .section{padding:18px;border:1px solid var(--lineSoft);border-radius:22px;background:rgba(255,255,255,.02);display:grid;gap:10px}
+    .section p{white-space:pre-line}
+    .footer{padding:18px 22px;color:var(--muted);font-size:.9rem}
+    @media (max-width:760px){.page{width:min(100%,calc(100% - 20px))}h1{font-size:2rem}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="panel topbar">
+      <div class="brand">
+        <div class="brand-mark">CSP</div>
+        <div class="brand-title"><span class="gold">CardScores</span><span class="white">Pro</span></div>
+      </div>
+    </header>
+
+    <section class="panel hero">
+      <div class="kicker">Právne informácie</div>
+      <h1>Ochrana osobných údajov</h1>
+      <p>Informácie o spracúvaní osobných údajov pre službu Cardscorespro. Identifikačné údaje a dátum účinnosti doplníš pred spustením webu.</p>
+      <div class="meta">
+        <div><strong>Prevádzkovateľ:</strong> Cardscorespro</div>
+        <div><strong>Sídlo / miesto podnikania:</strong> [DOPLNIŤ]</div>
+        <div><strong>IČO:</strong> [DOPLNIŤ]</div>
+        <div><strong>Kontaktný e-mail:</strong> [DOPLNIŤ]</div>
+        <div><strong>Účinnosť od:</strong> [DOPLNIŤ DÁTUM]</div>
+      </div>
+    </section>
+
+    <section class="panel toc">
+      <h2>Obsah</h2>
+      <div class="toc-list">
+        <a href="#uvod">1. Úvod</a>
+        <a href="#prevadzkovatel">2. Kto spracúva osobné údaje</a>
+        <a href="#ake-udaje">3. Aké osobné údaje môžeme spracúvať</a>
+        <a href="#ucely">4. Na aké účely spracúvame osobné údaje</a>
+        <a href="#pravne-zaklady">5. Právne základy spracúvania</a>
+        <a href="#prijemcovia">6. Komu môžeme osobné údaje poskytovať</a>
+        <a href="#tretie-krajiny">7. Prenos osobných údajov do tretích krajín</a>
+        <a href="#uchovavanie">8. Doba uchovávania osobných údajov</a>
+        <a href="#prava">9. Aké práva má dotknutá osoba</a>
+        <a href="#staznost">10. Sťažnosť dozornému orgánu</a>
+        <a href="#cookies">11. Cookies a podobné technológie</a>
+        <a href="#deti">12. Ochrana osobných údajov detí</a>
+        <a href="#bezpecnost">13. Bezpečnosť osobných údajov</a>
+        <a href="#zmeny">14. Zmeny tohto dokumentu</a>
+        <a href="#kontakt">15. Kontakt</a>
+      </div>
+    </section>
+
+    <section class="panel content">
+      <div class="section" id="uvod">
+        <h2>1. Úvod</h2>
+        <p>Táto informácia o spracúvaní osobných údajov vysvetľuje, ako služba Cardscorespro spracúva osobné údaje používateľov webovej stránky, registrovaných používateľov, organizátorov, klubov a ďalších osôb, ktoré používajú digitálnu službu Cardscorespro.
+
+Cieľom tohto dokumentu je poskytnúť dotknutým osobám zrozumiteľné informácie o tom, aké osobné údaje spracúvame, na aké účely, na akom právnom základe, komu ich poskytujeme, ako dlho ich uchovávame a aké práva majú dotknuté osoby.</p>
+      </div>
+
+      <div class="section" id="prevadzkovatel">
+        <h2>2. Kto spracúva osobné údaje</h2>
+        <div class="list">
+          <div><strong>Prevádzkovateľ:</strong> Cardscorespro</div>
+          <div><strong>Sídlo / miesto podnikania:</strong> [DOPLNIŤ]</div>
+          <div><strong>IČO:</strong> [DOPLNIŤ]</div>
+          <div><strong>E-mail:</strong> [DOPLNIŤ]</div>
+          <div><strong>Zodpovedná osoba:</strong> [DOPLNIŤ, AK BUDE URČENÁ]</div>
+        </div>
+      </div>
+
+      <div class="section" id="ake-udaje">
+        <h2>3. Aké osobné údaje môžeme spracúvať</h2>
+        <p>V závislosti od toho, ako používateľ využíva službu, môžeme spracúvať najmä tieto kategórie osobných údajov:
+
+- identifikačné údaje, napríklad meno a priezvisko,
+- kontaktné údaje, napríklad e-mail alebo telefónne číslo,
+- prihlasovacie a účtové údaje,
+- údaje o profile používateľa,
+- údaje o účasti na turnajoch a výsledkoch,
+- údaje o tréningu a aktivite v rámci platformy,
+- fakturačné a platobné údaje,
+- údaje súvisiace s inzerciou alebo reklamou,
+- technické údaje o používaní webu a zariadenia,
+- komunikáciu s podporou alebo s prevádzkovateľom.</p>
+      </div>
+
+      <div class="section" id="ucely">
+        <h2>4. Na aké účely spracúvame osobné údaje</h2>
+        <p>Osobné údaje môžeme spracúvať najmä na tieto účely:
+
+4.1. Vytvorenie a správa používateľského účtu
+Aby bolo možné vytvoriť účet, prihlásiť sa, spravovať profil a používať funkcie platformy.
+
+4.2. Poskytovanie digitálnej služby
+Na zabezpečenie fungovania platformy, správy turnajov, priebehu turnaja, tréningových modulov, profilu používateľa a ďalších funkcií služby.
+
+4.3. Plnenie zmluvy a predplatného
+Na aktiváciu predplatných balíkov, správu platieb, vystavenie dokladov, evidenciu predplatného a poskytovanie platených funkcií.
+
+4.4. Komunikácia s používateľom
+Na vybavenie otázok, požiadaviek, reklamácií, technickej podpory a oznamov súvisiacich so službou.
+
+4.5. Zabezpečenie a ochrana platformy
+Na prevenciu zneužitia služby, ochranu účtu, detekciu podvodného alebo neautorizovaného správania a ochranu práv prevádzkovateľa.
+
+4.6. Inzercia a reklamný obsah
+Na správu inzercie, zverejnenie reklamného alebo propagačného obsahu a vyhodnotenie základného fungovania reklamných formátov, ak to bude súčasť služby.
+
+4.7. Štatistika, analýza a zlepšovanie služby
+Na vyhodnocovanie fungovania webu, zlepšovanie používateľského prostredia a rozvoj funkcionalít platformy.
+
+4.8. Plnenie právnych povinností
+Na splnenie zákonných povinností, najmä v oblasti účtovníctva, daní, reklamácií, ochrany spotrebiteľa a ochrany osobných údajov.</p>
+      </div>
+
+      <div class="section" id="pravne-zaklady">
+        <h2>5. Právne základy spracúvania</h2>
+        <p>Osobné údaje spracúvame na základe jedného alebo viacerých z týchto právnych základov:
+
+- plnenie zmluvy alebo vykonanie opatrení pred uzatvorením zmluvy,
+- plnenie zákonnej povinnosti,
+- oprávnený záujem prevádzkovateľa,
+- súhlas dotknutej osoby, ak je súhlas potrebný.
+
+Ak je konkrétny účel založený na súhlase, dotknutá osoba môže súhlas kedykoľvek odvolať bez toho, aby tým bola dotknutá zákonnosť spracúvania pred jeho odvolaním.</p>
+      </div>
+
+      <div class="section" id="prijemcovia">
+        <h2>6. Komu môžeme osobné údaje poskytovať</h2>
+        <p>Osobné údaje môžeme poskytovať alebo sprístupňovať najmä týmto kategóriám príjemcov:
+
+- poskytovateľom hostingu a technickej infraštruktúry,
+- poskytovateľom platobných služieb,
+- účtovným, daňovým alebo právnym poradcom,
+- poskytovateľom analytických alebo marketingových nástrojov, ak budú používané,
+- zmluvným partnerom zabezpečujúcim technickú alebo administratívnu podporu,
+- orgánom verejnej moci, ak to vyžaduje právny predpis.</p>
+      </div>
+
+      <div class="section" id="tretie-krajiny">
+        <h2>7. Prenos osobných údajov do tretích krajín</h2>
+        <p>Ak by došlo k prenosu osobných údajov mimo Európskej únie alebo Európskeho hospodárskeho priestoru, prevádzkovateľ zabezpečí, aby takýto prenos prebiehal v súlade s príslušnými právnymi predpismi a s primeranými zárukami.</p>
+      </div>
+
+      <div class="section" id="uchovavanie">
+        <h2>8. Doba uchovávania osobných údajov</h2>
+        <p>Osobné údaje uchovávame len po dobu, ktorá je nevyhnutná na splnenie účelu spracúvania, alebo po dobu vyžadovanú právnymi predpismi.
+
+Vo všeobecnosti to môže znamenať:
+- údaje o účte po dobu trvania účtu a primeraný čas po jeho zrušení,
+- fakturačné a účtovné údaje po dobu stanovenú právnymi predpismi,
+- komunikáciu s podporou po dobu potrebnú na vybavenie požiadavky a ochranu práv prevádzkovateľa,
+- technické alebo analytické údaje podľa povahy nástroja a nastavenia cookies.</p>
+      </div>
+
+      <div class="section" id="prava">
+        <h2>9. Aké práva má dotknutá osoba</h2>
+        <p>Dotknutá osoba má podľa príslušných právnych predpisov najmä právo:
+- požadovať prístup k svojim osobným údajom,
+- požadovať opravu nesprávnych alebo neúplných údajov,
+- požadovať vymazanie osobných údajov, ak sú splnené zákonné podmienky,
+- požadovať obmedzenie spracúvania,
+- namietať proti spracúvaniu založenému na oprávnenom záujme,
+- požadovať prenosnosť údajov, ak sú splnené zákonné podmienky,
+- odvolať súhlas so spracúvaním, ak sa spracúvanie vykonáva na základe súhlasu,
+- podať sťažnosť dozornému orgánu.</p>
+      </div>
+
+      <div class="section" id="staznost">
+        <h2>10. Sťažnosť dozornému orgánu</h2>
+        <p>Ak sa dotknutá osoba domnieva, že pri spracúvaní jej osobných údajov dochádza k porušeniu právnych predpisov, môže podať sťažnosť Úradu na ochranu osobných údajov Slovenskej republiky.</p>
+      </div>
+
+      <div class="section" id="cookies">
+        <h2>11. Cookies a podobné technológie</h2>
+        <p>Webová stránka môže používať cookies a podobné technológie na zabezpečenie funkčnosti, meranie návštevnosti, analýzu používania webu a prípadne marketingové účely.
+
+Podrobnosti o cookies budú upravené v samostatnej cookies politike alebo v samostatnom nastavení cookies lišty, ak bude zavedená.</p>
+      </div>
+
+      <div class="section" id="deti">
+        <h2>12. Ochrana osobných údajov detí</h2>
+        <p>Ak je to relevantné vzhľadom na charakter služby, prevádzkovateľ nebude vedome spracúvať osobné údaje detí v rozpore s právnymi predpismi.
+
+Ak sa zistí, že došlo k spracúvaniu osobných údajov v rozpore s pravidlami týkajúcimi sa detí, prevádzkovateľ vykoná primerané kroky na nápravu.</p>
+      </div>
+
+      <div class="section" id="bezpecnost">
+        <h2>13. Bezpečnosť osobných údajov</h2>
+        <p>Prevádzkovateľ prijíma primerané technické a organizačné opatrenia na ochranu osobných údajov pred stratou, zneužitím, neoprávneným prístupom, zmenou alebo zničením.</p>
+      </div>
+
+      <div class="section" id="zmeny">
+        <h2>14. Zmeny tohto dokumentu</h2>
+        <p>Prevádzkovateľ si vyhradzuje právo tento dokument meniť alebo dopĺňať.
+
+Aktuálne znenie bude vždy zverejnené na webovej stránke služby Cardscorespro.
+
+Ak pôjde o významnú zmenu, prevádzkovateľ môže používateľa primeraným spôsobom informovať.</p>
+      </div>
+
+      <div class="section" id="kontakt">
+        <h2>15. Kontakt</h2>
+        <div class="list">
+          <div><strong>Prevádzkovateľ:</strong> Cardscorespro</div>
+          <div><strong>E-mail:</strong> [DOPLNIŤ]</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="panel footer">
+      Cardscorespro • ochrana osobných údajov • draft na doplnenie finálnych identifikačných údajov
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CSP – Priebeh turnaja</title>
+<style>
+:root{
+  --bg:#050505;--bg2:#0b0b0b;--line:rgba(255,255,255,.08);--line-soft:rgba(255,255,255,.05);
+  --text:#f4f4f4;--muted:#a7a7a7;--gold:#d8b04b;--green:#22d36b;--danger:#d96a6a;--blue:#6ea8ff;--amber:#e3b341;
+  --shadow:0 20px 60px rgba(0,0,0,.34)
+}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{
+  min-height:100vh;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--text);
+  background:radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 26%),linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%)
+}
+.page{width:min(1600px,calc(100% - 32px));margin:24px auto 40px;display:grid;gap:18px}
+.hero,.panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
+.hero{padding:18px 20px 20px;display:grid;gap:16px}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:52px;height:52px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em;flex:0 0 auto}
+.hero-title h1{margin:0 0 6px;font-size:2rem;letter-spacing:-.05em;color:var(--gold);line-height:1}
+.hero-title p{margin:0;color:var(--muted);font-size:.95rem}
+.state-box{min-width:240px;padding:14px 16px;border-radius:18px;border:1px solid rgba(34,211,107,.18);background:linear-gradient(180deg, rgba(34,211,107,.12), rgba(34,211,107,.06))}
+.state-box small{display:block;color:#9ed8b7;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.state-box strong{color:#c8ffdc;font-size:1.04rem}
+.summary-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.summary-item{padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.summary-item small{display:block;color:#8f8f8f;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.summary-item strong{display:block;font-size:1rem}
+.panel-inner{padding:18px}
+.view-switch{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.switch-btn,.action-btn,.modal-btn,.save-btn,.cancel-btn,.close-btn,.filter-btn{cursor:pointer}
+.switch-btn,.filter-btn{
+  min-height:46px;padding:0 16px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-weight:900
+}
+.switch-btn.active,.filter-btn.active{background:var(--green);color:#06230f;border-color:transparent}
+.view-panel{display:none}.view-panel.active{display:block}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.input,.select{
+  min-height:46px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--text);outline:none;font:inherit
+}
+.input{flex:1;min-width:220px}
+.table-wrap{border:1px solid var(--line);border-radius:18px;overflow:auto;background:rgba(255,255,255,.02)}
+table{width:100%;border-collapse:collapse;min-width:1080px}
+thead th{text-align:left;padding:14px 12px;font-size:.74rem;text-transform:uppercase;letter-spacing:.12em;color:#8f8f8f;background:rgba(0,0,0,.22);border-bottom:1px solid var(--line)}
+tbody td{padding:14px 12px;border-bottom:1px solid var(--line-soft);vertical-align:middle;font-size:.92rem}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+tbody tr.live-row{background:rgba(34,211,107,.12)}
+tbody tr.finished-row{background:rgba(110,168,255,.08)}
+.match-no{font-weight:900;color:var(--gold)}
+.player-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.player-meta small{color:var(--muted);font-size:.78rem;line-height:1.2}
+.score{font-weight:900;color:var(--gold)}
+.status-pill{display:inline-flex;align-items:center;justify-content:center;min-width:118px;min-height:32px;padding:0 10px;border-radius:999px;font-size:.74rem;font-weight:900;border:1px solid transparent}
+.status-ready{background:rgba(255,255,255,.04);color:#d4d4d4;border-color:var(--line)}
+.status-live{background:rgba(34,211,107,.12);color:#c8ffdc;border-color:rgba(34,211,107,.22)}
+.status-paused{background:rgba(227,179,65,.12);color:#f1d38c;border-color:rgba(227,179,65,.22)}
+.status-finished{background:rgba(110,168,255,.12);color:#d7e8ff;border-color:rgba(110,168,255,.22)}
+.action-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-size:1rem}
+.action-btn.play{color:#c8ffdc}.action-btn.pause{color:#f1d38c}.action-btn.stop{color:#d7e8ff}
+.notice{margin-top:14px;padding:12px 14px;border-radius:14px;background:rgba(34,211,107,.12);border:1px solid rgba(34,211,107,.22);color:#c8ffdc;display:none;font-size:.9rem;font-weight:700}
+.bracket-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.bracket-shell{overflow:auto;padding-bottom:6px}
+.bracket-grid{
+  display:grid;
+  grid-template-columns: 200px 200px 200px 220px 200px 200px 220px;
+  gap:14px;
+  align-items:start;
+  min-width:1480px
+}
+.round-col{display:grid;gap:12px}
+.round-head{
+  padding:10px 12px;border-radius:14px;border:1px solid rgba(216,176,75,.16);background:rgba(216,176,75,.08);color:var(--gold);font-weight:900;font-size:.84rem
+}
+.match-card{
+  padding:12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.02);display:grid;gap:10px
+}
+.match-card.live-card{border-color:rgba(34,211,107,.30);background:rgba(34,211,107,.08)}
+.match-card.finished-card{border-color:rgba(110,168,255,.22);background:rgba(110,168,255,.06)}
+.match-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.match-id{font-size:.8rem;font-weight:900;color:var(--gold)}
+.match-round{font-size:.72rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.players{display:grid;gap:8px}
+.player-line{
+  display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid var(--line-soft)
+}
+.player-score{font-weight:900;color:var(--gold)}
+.card-actions{display:flex;justify-content:flex-end}
+.tag-bar{display:flex;gap:8px;flex-wrap:wrap}
+.mini-tag{display:inline-flex;align-items:center;min-height:24px;padding:0 8px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:.72rem;color:#d8d8d8;font-weight:800}
+.stage-divider{
+  padding:10px 12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px dashed var(--line);color:var(--muted);font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;text-align:center
+}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal-backdrop.show{display:flex}
+.modal{width:min(620px,100%);border:1px solid var(--line);border-radius:24px;background:linear-gradient(180deg, rgba(20,20,20,.98), rgba(10,10,10,.98));box-shadow:var(--shadow);padding:18px}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:12px}
+.modal-head h3{margin:0;color:var(--gold);font-size:1.1rem}
+.modal-head p{margin:4px 0 0;color:var(--muted);font-size:.88rem}
+.close-btn{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text)}
+.score-grid{display:grid;grid-template-columns:1fr 120px 1fr;gap:10px;align-items:center;margin:12px 0}
+.player-box{padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+.player-box strong{display:block;font-size:.9rem;margin-bottom:6px}
+.player-box small{display:block;color:var(--muted);font-size:.8rem;margin-bottom:8px}
+.score-input{width:100%;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--text);font:inherit}
+.score-mid{text-align:center;color:var(--muted);font-weight:900}
+.action-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+.modal-btn{min-height:46px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-weight:900}
+.modal-btn.play{background:rgba(34,211,107,.14);color:#c8ffdc;border-color:rgba(34,211,107,.22)}
+.modal-btn.pause{background:rgba(227,179,65,.14);color:#f1d38c;border-color:rgba(227,179,65,.22)}
+.modal-btn.stop{background:rgba(110,168,255,.14);color:#d7e8ff;border-color:rgba(110,168,255,.22)}
+.modal-btn.delete{background:rgba(217,106,106,.14);color:#ffd0d0;border-color:rgba(217,106,106,.22)}
+.modal-save{margin-top:12px;display:flex;gap:10px;justify-content:flex-end}
+.save-btn,.cancel-btn{min-height:44px;padding:0 14px;border:none;border-radius:14px;font-weight:900}
+.save-btn{background:var(--green);color:#06230f}.cancel-btn{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
+.error{margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(217,106,106,.12);border:1px solid rgba(217,106,106,.22);color:#ffd0d0;display:none;font-size:.9rem;font-weight:700}
+@media (max-width:1150px){.summary-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:760px){.summary-grid{grid-template-columns:repeat(2,1fr)}.hero-title h1{font-size:1.7rem}.score-grid,.action-grid{grid-template-columns:1fr}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div class="hero-top">
+      <div class="brand">
+        <div class="brand-mark">CSP</div>
+        <div class="hero-title">
+          <h1 id="titleName">Tour de Pool</h1>
+          <p id="titleLine">Priebeh turnaja</p>
+        </div>
+      </div>
+      <div class="state-box">
+        <small>Stav turnaja</small>
+        <strong id="tournamentState">Prebieha</strong>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-item"><small>Šport</small><strong id="summarySport">Biliard</strong></div>
+      <div class="summary-item"><small>Disciplína</small><strong id="summaryDiscipline">8-Ball</strong></div>
+      <div class="summary-item"><small>Štruktúra</small><strong id="summaryStructure">Dvojité KO</strong></div>
+      <div class="summary-item"><small>Počet hráčov</small><strong id="summaryPlayers">16</strong></div>
+      <div class="summary-item"><small>Aktívne zápasy</small><strong id="summaryLive">1</strong></div>
+      <div class="summary-item"><small>Hotové zápasy</small><strong id="summaryFinished">0</strong></div>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="panel-inner">
+      <div class="view-switch">
+        <button class="switch-btn active" data-view="list" type="button">Zoznam zápasov</button>
+        <button class="switch-btn" data-view="bracket" type="button">Pavúk Double KO</button>
+      </div>
+
+      <div class="view-panel active" id="listView">
+        <div class="toolbar">
+          <input class="input" id="searchInput" placeholder="Hľadať podľa zápasu alebo mena hráča" />
+          <select class="select" id="roundFilter">
+            <option value="all">Všetky kolá</option>
+          </select>
+          <select class="select" id="statusFilter">
+            <option value="all">Všetky statusy</option>
+            <option value="ready">Čaká</option>
+            <option value="live">Hrá sa</option>
+            <option value="paused">Pauza</option>
+            <option value="finished">Ukončený</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Zápas</th>
+                <th>Kolo</th>
+                <th>Hráč 1</th>
+                <th>Skóre</th>
+                <th>Hráč 2</th>
+                <th>Status</th>
+                <th>Akcia</th>
+              </tr>
+            </thead>
+            <tbody id="matchesBody"></tbody>
+          </table>
+        </div>
+        <div class="notice" id="listNotice"></div>
+      </div>
+
+      <div class="view-panel" id="bracketView">
+        <div class="bracket-toolbar">
+          <button class="filter-btn active" data-bracket="all" type="button">Celý pavúk</button>
+          <button class="filter-btn" data-bracket="winners" type="button">Víťazná vetva</button>
+          <button class="filter-btn" data-bracket="losers" type="button">Porazená vetva</button>
+        </div>
+        <div class="bracket-shell">
+          <div class="bracket-grid">
+            <div class="round-col bracket-losers" data-group="losers" id="colB2b">
+              <div class="round-head">B2b</div>
+            </div>
+            <div class="round-col bracket-losers" data-group="losers" id="colB2a">
+              <div class="round-head">B2a</div>
+            </div>
+            <div class="round-col bracket-losers" data-group="losers" id="colB1">
+              <div class="round-head">B1a / B1b</div>
+            </div>
+            <div class="round-col" id="colA0">
+              <div class="round-head">A0</div>
+              <div class="stage-divider">Prvé kolo</div>
+            </div>
+            <div class="round-col bracket-winners" data-group="winners" id="colA1">
+              <div class="round-head">A1</div>
+            </div>
+            <div class="round-col bracket-winners" data-group="winners" id="colA2">
+              <div class="round-head">A2 / SF</div>
+            </div>
+            <div class="round-col" id="colFIN">
+              <div class="round-head">FIN / FI3</div>
+            </div>
+          </div>
+        </div>
+        <div class="notice" id="bracketNotice"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="modal-backdrop" id="matchModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="modalTitle">Zápas</h3>
+        <p id="modalSubtitle">Správa zápasu</p>
+      </div>
+      <button class="close-btn" id="closeModal" type="button">✕</button>
+    </div>
+
+    <div class="score-grid">
+      <div class="player-box">
+        <strong id="modalPlayer1">Hráč 1</strong>
+        <small id="modalClub1">—</small>
+        <input class="score-input" id="score1" type="number" min="0" step="1" value="0" />
+      </div>
+      <div class="score-mid">:</div>
+      <div class="player-box">
+        <strong id="modalPlayer2">Hráč 2</strong>
+        <small id="modalClub2">—</small>
+        <input class="score-input" id="score2" type="number" min="0" step="1" value="0" />
+      </div>
+    </div>
+
+    <div class="action-grid">
+      <button class="modal-btn play" data-modal-action="play" type="button">Play</button>
+      <button class="modal-btn pause" data-modal-action="pause" type="button">Pause</button>
+      <button class="modal-btn stop" data-modal-action="stop" type="button">Stop</button>
+      <button class="modal-btn delete" data-modal-action="delete" type="button">Delete</button>
+    </div>
+
+    <div class="modal-save">
+      <button class="cancel-btn" id="cancelModal" type="button">Zavrieť</button>
+      <button class="save-btn" id="saveScore" type="button">Zapísať skóre</button>
+    </div>
+
+    <div class="error" id="modalError"></div>
+  </div>
+</div>
+
+<script>
+
+const SUPABASE_URL = "DOPLN_SUPABASE_URL";
+const SUPABASE_ANON_KEY = "DOPLN_SUPABASE_ANON_KEY";
+const supabaseClient = (window.supabase && SUPABASE_URL !== "DOPLN_SUPABASE_URL" && SUPABASE_ANON_KEY !== "DOPLN_SUPABASE_ANON_KEY")
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+const tournament = {
+  name: "Turnaj",
+  sport: "",
+  discipline: "",
+  structure: "",
+  state: "Prebieha",
+  fieldSize: 0,
+  location: "",
+  date: "",
+  time: ""
+};
+
+const players = {};
+let matches = [];
+
+function getTournamentIdFromUrl(){
+  const url = new URL(window.location.href);
+  return url.searchParams.get("id");
+}
+
+async function loadTournamentFromDb(){
+  const tournamentId = getTournamentIdFromUrl();
+  if(!supabaseClient) throw new Error("Doplň SUPABASE_URL a SUPABASE_ANON_KEY.");
+  if(!tournamentId) throw new Error("Chýba ID turnaja v adrese.");
+
+  const { data: tournamentRow, error: tournamentError } = await supabaseClient
+    .from("tournaments")
+    .select("*")
+    .eq("id", tournamentId)
+    .single();
+
+  if(tournamentError) throw tournamentError;
+
+  tournament.name = tournamentRow.name || "Turnaj";
+  tournament.sport = tournamentRow.sport === "billiard" ? "Biliard" : "Šípky";
+  tournament.discipline = tournamentRow.discipline || "";
+  tournament.structure = tournamentRow.structure === "double_ko" ? "Dvojité KO" : tournamentRow.structure;
+  tournament.state = tournamentRow.status === "finished" ? "Ukončený" : "Prebieha";
+  tournament.fieldSize = tournamentRow.field_size || 0;
+  tournament.location = tournamentRow.location || "";
+  tournament.date = tournamentRow.event_date || "";
+  tournament.time = tournamentRow.event_time || "";
+
+  const { data: playerRows, error: playersError } = await supabaseClient
+    .from("tournament_players")
+    .select("*")
+    .eq("tournament_id", tournamentId)
+    .order("display_order", { ascending: true });
+
+  if(playersError) throw playersError;
+
+  Object.keys(players).forEach(k => delete players[k]);
+  playerRows.forEach((p, idx) => {
+    players[p.id] = { name: p.name || `Hráč ${idx+1}`, club: p.club_city || "", seed: p.seed_number ?? "" };
+  });
+  players.WO = { name:"w.o.", club:"Voľný žreb", seed:"" };
+
+  const { data: matchRows, error: matchesError } = await supabaseClient
+    .from("matches")
+    .select("*")
+    .eq("tournament_id", tournamentId)
+    .order("stage_order", { ascending: true })
+    .order("position_order", { ascending: true });
+
+  if(matchesError) throw matchesError;
+
+  matches = matchRows.map(m => ({
+    id: m.match_code,
+    dbId: m.id,
+    round: m.round_code,
+    bracket: m.bracket,
+    stage: m.stage_order,
+    p1: m.player1_id || m.player1_name_snapshot || "WO",
+    p2: m.player2_id || m.player2_name_snapshot || "WO",
+    score1: m.score1 ?? "",
+    score2: m.score2 ?? "",
+    status: m.status
+  }));
+}
+
+const el = {
+  titleName: document.getElementById("titleName"),
+  titleLine: document.getElementById("titleLine"),
+  tournamentState: document.getElementById("tournamentState"),
+  summarySport: document.getElementById("summarySport"),
+  summaryDiscipline: document.getElementById("summaryDiscipline"),
+  summaryStructure: document.getElementById("summaryStructure"),
+  summaryPlayers: document.getElementById("summaryPlayers"),
+  summaryLive: document.getElementById("summaryLive"),
+  summaryFinished: document.getElementById("summaryFinished"),
+  matchesBody: document.getElementById("matchesBody"),
+  roundFilter: document.getElementById("roundFilter"),
+  statusFilter: document.getElementById("statusFilter"),
+  searchInput: document.getElementById("searchInput"),
+  listNotice: document.getElementById("listNotice"),
+  bracketNotice: document.getElementById("bracketNotice"),
+  modal: document.getElementById("matchModal"),
+  modalTitle: document.getElementById("modalTitle"),
+  modalSubtitle: document.getElementById("modalSubtitle"),
+  modalPlayer1: document.getElementById("modalPlayer1"),
+  modalPlayer2: document.getElementById("modalPlayer2"),
+  modalClub1: document.getElementById("modalClub1"),
+  modalClub2: document.getElementById("modalClub2"),
+  score1: document.getElementById("score1"),
+  score2: document.getElementById("score2"),
+  modalError: document.getElementById("modalError")
+};
+
+let activeMatchId = null;
+let pendingAction = null;
+
+function playerLabel(key){
+  if(players[key]) return players[key];
+  return {name:key, club:""};
+}
+function statusClass(status){
+  if(status==="live") return "status-live";
+  if(status==="paused") return "status-paused";
+  if(status==="finished") return "status-finished";
+  return "status-ready";
+}
+function statusText(status){
+  if(status==="live") return "Hrá sa";
+  if(status==="paused") return "Pauza";
+  if(status==="finished") return "Ukončený";
+  return "Čaká";
+}
+function scoreText(match){
+  if(match.score1==="" && match.score2==="") return "—";
+  return `${match.score1} : ${match.score2}`;
+}
+function updateSummary(){
+  el.titleName.textContent = tournament.name;
+  el.titleLine.textContent = [tournament.location, tournament.date, tournament.time].filter(Boolean).join(" • ") || "Priebeh turnaja";
+  el.tournamentState.textContent = tournament.state;
+  el.summarySport.textContent = tournament.sport;
+  el.summaryDiscipline.textContent = tournament.discipline;
+  el.summaryStructure.textContent = tournament.structure;
+  el.summaryPlayers.textContent = String(Object.keys(players).filter(k=>k!=="WO").length);
+  el.summaryLive.textContent = String(matches.filter(m=>m.status==="live").length);
+  el.summaryFinished.textContent = String(matches.filter(m=>m.status==="finished").length);
+}
+function buildRoundFilter(){
+  const rounds = [...new Set(matches.map(m=>m.round))];
+  rounds.forEach(round=>{
+    const opt = document.createElement("option");
+    opt.value = round;
+    opt.textContent = round;
+    el.roundFilter.appendChild(opt);
+  });
+}
+function renderTable(){
+  const q = el.searchInput.value.trim().toLowerCase();
+  const round = el.roundFilter.value;
+  const status = el.statusFilter.value;
+  el.matchesBody.innerHTML = "";
+  const filtered = matches.filter(match=>{
+    const p1 = playerLabel(match.p1).name.toLowerCase();
+    const p2 = playerLabel(match.p2).name.toLowerCase();
+    const hay = `${match.id} ${match.round} ${p1} ${p2}`.toLowerCase();
+    return (round==="all" || match.round===round) &&
+           (status==="all" || match.status===status) &&
+           (!q || hay.includes(q));
+  });
+
+  filtered.forEach(match=>{
+    const tr = document.createElement("tr");
+    if(match.status==="live") tr.classList.add("live-row");
+    if(match.status==="finished") tr.classList.add("finished-row");
+
+    const p1 = playerLabel(match.p1);
+    const p2 = playerLabel(match.p2);
+
+    tr.innerHTML = `
+      <td class="match-no">${match.id}</td>
+      <td>${match.round}</td>
+      <td><div class="player-meta"><span>${p1.name}</span><small>${p1.club || "—"}</small></div></td>
+      <td class="score">${scoreText(match)}</td>
+      <td><div class="player-meta"><span>${p2.name}</span><small>${p2.club || "—"}</small></div></td>
+      <td><span class="status-pill ${statusClass(match.status)}">${statusText(match.status)}</span></td>
+      <td>
+        <button class="action-btn play" data-id="${match.id}" title="Správa zápasu">▶</button>
+      </td>`;
+    el.matchesBody.appendChild(tr);
+  });
+}
+function cardHTML(match){
+  const p1 = playerLabel(match.p1);
+  const p2 = playerLabel(match.p2);
+  return `
+    <div class="match-card ${match.status==="live"?"live-card":""} ${match.status==="finished"?"finished-card":""}">
+      <div class="match-top">
+        <div>
+          <div class="match-id">${match.id}</div>
+          <div class="match-round">${match.round}</div>
+        </div>
+        <span class="status-pill ${statusClass(match.status)}">${statusText(match.status)}</span>
+      </div>
+      <div class="players">
+        <div class="player-line">
+          <div class="player-meta"><span>${p1.name}</span><small>${p1.club || "—"}</small></div>
+          <div class="player-score">${match.score1===""?"—":match.score1}</div>
+        </div>
+        <div class="player-line">
+          <div class="player-meta"><span>${p2.name}</span><small>${p2.club || "—"}</small></div>
+          <div class="player-score">${match.score2===""?"—":match.score2}</div>
+        </div>
+      </div>
+      <div class="tag-bar">
+        <span class="mini-tag">${match.round}</span>
+        <span class="mini-tag">${match.bracket==="winners"?"Víťazi":match.bracket==="losers"?"Porazení":match.bracket==="center"?"1. kolo":"Finále"}</span>
+      </div>
+      <div class="card-actions">
+        <button class="action-btn play" data-id="${match.id}" title="Správa zápasu">▶</button>
+      </div>
+    </div>`;
+}
+function renderBracket(){
+  const cols = {
+    B2b: document.getElementById("colB2b"),
+    B2a: document.getElementById("colB2a"),
+    B1: document.getElementById("colB1"),
+    A0: document.getElementById("colA0"),
+    A1: document.getElementById("colA1"),
+    A2: document.getElementById("colA2"),
+    FIN: document.getElementById("colFIN")
+  };
+  Object.values(cols).forEach(col=>{
+    const head = col.querySelector(".round-head");
+    col.innerHTML = "";
+    col.appendChild(head);
+  });
+  const divider = document.createElement("div");
+  divider.className = "stage-divider";
+  divider.textContent = "Prvé kolo";
+  cols.A0.appendChild(divider);
+
+  matches.filter(m=>m.round==="B2b").forEach(m=>cols.B2b.insertAdjacentHTML("beforeend", cardHTML(m)));
+  matches.filter(m=>m.round==="B2a").forEach(m=>cols.B2a.insertAdjacentHTML("beforeend", cardHTML(m)));
+  matches.filter(m=>m.round==="B1a" || m.round==="B1b").forEach(m=>cols.B1.insertAdjacentHTML("beforeend", cardHTML(m)));
+  matches.filter(m=>m.round==="A0").forEach(m=>cols.A0.insertAdjacentHTML("beforeend", cardHTML(m)));
+  matches.filter(m=>m.round==="A1").forEach(m=>cols.A1.insertAdjacentHTML("beforeend", cardHTML(m)));
+  matches.filter(m=>m.round==="A2" || m.round==="SF").forEach(m=>cols.A2.insertAdjacentHTML("beforeend", cardHTML(m)));
+  matches.filter(m=>m.round==="FIN" || m.round==="FI3").forEach(m=>cols.FIN.insertAdjacentHTML("beforeend", cardHTML(m)));
+
+  bindCardButtons();
+}
+function bindCardButtons(){
+  document.querySelectorAll("[data-id]").forEach(btn=>{
+    btn.onclick = ()=>openModal(btn.dataset.id);
+  });
+}
+function openModal(id){
+  activeMatchId = id;
+  const match = matches.find(m=>m.id===id);
+  const p1 = playerLabel(match.p1);
+  const p2 = playerLabel(match.p2);
+  el.modalTitle.textContent = id;
+  el.modalSubtitle.textContent = `Kolo ${match.round}`;
+  el.modalPlayer1.textContent = p1.name;
+  el.modalPlayer2.textContent = p2.name;
+  el.modalClub1.textContent = p1.club || "—";
+  el.modalClub2.textContent = p2.club || "—";
+  el.score1.value = match.score1 === "" ? 0 : match.score1;
+  el.score2.value = match.score2 === "" ? 0 : match.score2;
+  el.modalError.style.display = "none";
+  pendingAction = null;
+  el.modal.classList.add("show");
+}
+function closeModal(){
+  el.modal.classList.remove("show");
+  activeMatchId = null;
+  pendingAction = null;
+  el.modalError.style.display = "none";
+}
+async function saveMatch(){
+  const match = matches.find(m=>m.id===activeMatchId);
+  if(!match) return;
+  match.score1 = Number(el.score1.value || 0);
+  match.score2 = Number(el.score2.value || 0);
+  if(pendingAction==="play") match.status = "live";
+  if(pendingAction==="pause") match.status = "paused";
+  if(pendingAction==="stop") match.status = "finished";
+  if(pendingAction==="delete"){ match.status = "ready"; match.score1 = null; match.score2 = null; }
+
+  try{
+    if(!supabaseClient) throw new Error("Doplň SUPABASE_URL a SUPABASE_ANON_KEY.");
+    const { error } = await supabaseClient
+      .from("matches")
+      .update({
+        score1: match.score1,
+        score2: match.score2,
+        status: match.status
+      })
+      .eq("id", match.dbId);
+
+    if(error) throw error;
+
+    updateSummary();
+    renderTable();
+    renderBracket();
+    closeModal();
+    const notice = document.getElementById(document.querySelector(".view-panel.active").id==="listView" ? "listNotice" : "bracketNotice");
+    notice.textContent = `Zápas ${match.id} bol aktualizovaný.`;
+    notice.style.display = "block";
+    setTimeout(()=>notice.style.display="none", 2500);
+  }catch(err){
+    el.modalError.textContent = err.message || "Nepodarilo sa uložiť zápas.";
+    el.modalError.style.display = "block";
+  }
+}
+
+document.querySelectorAll(".switch-btn[data-view]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".switch-btn[data-view]").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".view-panel").forEach(v=>v.classList.remove("active"));
+    document.getElementById(btn.dataset.view==="list" ? "listView" : "bracketView").classList.add("active");
+  });
+});
+document.querySelectorAll(".filter-btn[data-bracket]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll(".filter-btn[data-bracket]").forEach(x=>x.classList.remove("active"));
+    btn.classList.add("active");
+    const mode = btn.dataset.bracket;
+    document.querySelectorAll(".bracket-winners,.bracket-losers").forEach(col=>col.style.display="grid");
+    if(mode==="winners") document.querySelectorAll(".bracket-losers").forEach(col=>col.style.display="none");
+    if(mode==="losers") document.querySelectorAll(".bracket-winners").forEach(col=>col.style.display="none");
+  });
+});
+document.getElementById("closeModal").addEventListener("click", closeModal);
+document.getElementById("cancelModal").addEventListener("click", closeModal);
+document.getElementById("saveScore").addEventListener("click", saveMatch);
+document.querySelectorAll("[data-modal-action]").forEach(btn=>{
+  btn.addEventListener("click", ()=>{ pendingAction = btn.dataset.modalAction; });
+});
+el.searchInput.addEventListener("input", renderTable);
+el.roundFilter.addEventListener("change", renderTable);
+el.statusFilter.addEventListener("change", renderTable);
+
+(async function init(){
+  try{
+    await loadTournamentFromDb();
+    updateSummary();
+    buildRoundFilter();
+    renderTable();
+    renderBracket();
+    bindCardButtons();
+  }catch(err){
+    const notice = document.getElementById("listNotice");
+    notice.textContent = err.message || "Nepodarilo sa načítať turnaj z databázy.";
+    notice.style.display = "block";
+  }
+})();
+</script>
+</body>
+</html>
