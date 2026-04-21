@@ -3,182 +3,310 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cardscorespro – Prihlásenie do turnaja</title>
+  <title>Cardscorespro – Prihlásenie / Registrácia</title>
   <style>
     :root{
-      --bg:#050505;--bg2:#0b0b0b;--line:rgba(255,255,255,.08);--line-soft:rgba(255,255,255,.05);
-      --text:#f4f4f4;--gold:#d8b04b;--green:#22d36b;--danger:#c85757;--shadow:0 20px 60px rgba(0,0,0,.34);
+      --bg:#050505; --bg2:#0b0b0b; --line:rgba(255,255,255,.08); --lineSoft:rgba(255,255,255,.05);
+      --text:#f4f4f4; --muted:#a7a7a7; --gold:#d8b04b; --green:#22d36b; --danger:#c85757; --shadow:0 20px 60px rgba(0,0,0,.34);
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
     body{
-      min-height:100vh;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--text);
-      background:radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 24%),linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+      min-height:100vh;
+      font-family:Inter,Arial,Helvetica,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 24%),
+        linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+      display:grid;
+      place-items:center;
+      padding:24px 16px;
     }
     button,input{font:inherit}
-    .page{width:min(860px,calc(100% - 32px));margin:24px auto 40px;display:grid;gap:18px}
-    .panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
-    .topbar{padding:14px 18px;display:flex;align-items:center}
-    .brand{display:flex;align-items:center;gap:14px}
-    .brand-mark{width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em}
+    .shell{width:min(520px,100%);display:grid;gap:18px}
+    .panel{
+      border:1px solid var(--line);
+      border-radius:28px;
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
+      box-shadow:var(--shadow);
+    }
+    .brand{padding:18px;display:flex;justify-content:center;align-items:center;gap:14px}
+    .brand-mark{
+      width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);
+      background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em;
+    }
     .brand-title{font-size:1.35rem;font-weight:900;letter-spacing:-.04em}
     .brand-title .gold{color:var(--gold)} .brand-title .white{color:#fff}
-    .content{padding:22px;display:grid;gap:18px}
-    h1{margin:0;color:var(--gold);font-size:clamp(2rem,4vw,3.2rem);line-height:1.02;letter-spacing:-.05em;text-align:center}
-    .input{width:100%;min-height:78px;padding:0 22px;border-radius:22px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);outline:none;font-size:1.28rem;font-weight:700;text-align:center}
-    .input::placeholder{color:#8d8d8d;font-weight:600}
-    .btn-row{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-    .btn{min-height:52px;padding:0 22px;border:none;border-radius:16px;font-weight:900;cursor:pointer;font-size:1rem}
-    .btn-green{background:var(--green);color:#06230f}
-    .btn-dark{background:rgba(255,255,255,.04);color:var(--text);border:1px solid var(--line)}
-    .notice,.error{display:none;padding:12px 14px;border-radius:14px;font-size:.92rem;line-height:1.5;text-align:center}
+    .card{padding:22px;display:grid;gap:18px}
+    .switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:6px;border-radius:18px;border:1px solid var(--lineSoft);background:rgba(255,255,255,.02)}
+    .switch-btn{min-height:48px;border:none;border-radius:14px;background:transparent;color:var(--text);font-weight:900;cursor:pointer}
+    .switch-btn.active{background:var(--green);color:#06230f}
+    h1,p{margin:0}
+    h1{color:var(--gold);font-size:clamp(1.9rem,4vw,2.6rem);line-height:1.02;letter-spacing:-.05em;text-align:center}
+    .subtitle{color:var(--muted);text-align:center;line-height:1.55;font-size:.95rem}
+    .form{display:grid;gap:12px}
+    .field{display:grid;gap:8px}
+    .field label{color:#ddd;font-size:.9rem;font-weight:800}
+    .input{
+      width:100%;min-height:52px;padding:0 14px;border-radius:14px;border:1px solid var(--line);
+      background:rgba(255,255,255,.03);color:var(--text);outline:none;
+    }
+    .input::placeholder{color:#888}
+    .captcha{
+      min-height:74px;border-radius:18px;border:1px dashed rgba(216,176,75,.22);background:rgba(216,176,75,.05);
+      display:grid;place-items:center;text-align:center;color:#ead7a2;padding:14px;font-size:.94rem;line-height:1.45;
+    }
+    .btn{min-height:52px;border:none;border-radius:16px;font-weight:900;cursor:pointer}
+    .btn-primary{background:var(--green);color:#06230f}
+    .socials{display:grid;gap:10px}
+    .social-btn{
+      min-height:50px;border-radius:16px;border:1px solid var(--line);
+      background:rgba(255,255,255,.03);color:var(--text);font-weight:900;cursor:pointer;
+    }
+    .notice,.error{
+      display:none;padding:12px 14px;border-radius:14px;font-size:.92rem;line-height:1.5;text-align:center;
+    }
     .notice{background:rgba(34,211,107,.10);border:1px solid rgba(34,211,107,.18);color:#d8ffe6}
     .error{background:rgba(200,87,87,.12);border:1px solid rgba(200,87,87,.18);color:#ffd6d6}
-    .players-box{min-height:260px;padding:18px;border-radius:22px;border:1px solid var(--line-soft);background:rgba(255,255,255,.02);white-space:pre-line;line-height:1.8;color:#f0f0f0;font-size:1.08rem}
-    .empty-text{color:#8f8f8f}
-    @media (max-width:760px){.input{min-height:68px;font-size:1.08rem}}
+    .muted-link{text-align:center;color:var(--muted);font-size:.9rem}
+    .hidden{display:none !important}
   </style>
 </head>
 <body>
-  <div class="page">
-    <header class="panel topbar">
-      <div class="brand">
-        <div class="brand-mark">CSP</div>
-        <div class="brand-title"><span class="gold">CardScores</span><span class="white">Pro</span></div>
-      </div>
-    </header>
+  <div class="shell">
+    <div class="panel brand">
+      <div class="brand-mark">CSP</div>
+      <div class="brand-title"><span class="gold">CardScores</span><span class="white">Pro</span></div>
+    </div>
 
-    <section class="panel content">
-      <h1>Prihlásenie do turnaja</h1>
-
-      <input id="playerName" class="input" type="text" maxlength="40" placeholder="Meno alebo prezývka" />
-
-      <div class="btn-row">
-        <button class="btn btn-green" id="joinBtn" type="button">OK</button>
-        <button class="btn btn-dark" id="clearBtn" type="button">Vyčistiť</button>
+    <div class="panel card">
+      <div class="switch">
+        <button class="switch-btn active" id="loginTab" type="button">Prihlásenie</button>
+        <button class="switch-btn" id="registerTab" type="button">Registrácia</button>
       </div>
 
-      <div class="notice" id="noticeBox"></div>
-      <div class="error" id="errorBox"></div>
+      <div id="loginView">
+        <h1>Prihlásenie</h1>
+        <p class="subtitle">Vstúp do svojho účtu.</p>
 
-      <div id="playersBox" class="players-box"><span class="empty-text">Načítavam...</span></div>
-    </section>
+        <div class="form">
+          <div class="field">
+            <label for="loginEmail">E-mail</label>
+            <input id="loginEmail" class="input" type="email" placeholder="Zadaj e-mail" />
+          </div>
+
+          <div class="field">
+            <label for="loginPassword">Heslo</label>
+            <input id="loginPassword" class="input" type="password" placeholder="Zadaj heslo" />
+          </div>
+
+          <div class="captcha">Captcha overenie<br>miesto pripravené na napojenie</div>
+
+          <div class="notice" id="loginNotice"></div>
+          <div class="error" id="loginError"></div>
+
+          <button class="btn btn-primary" id="loginBtn" type="button">Prihlásiť sa</button>
+
+          <div class="socials">
+            <button class="social-btn" id="googleBtn" type="button">Pokračovať cez Google</button>
+            <button class="social-btn" id="facebookBtn" type="button">Pokračovať cez Facebook</button>
+            <button class="social-btn" id="appleBtn" type="button">Pokračovať cez Apple</button>
+          </div>
+
+          <div class="muted-link">Zabudnuté heslo</div>
+        </div>
+      </div>
+
+      <div id="registerView" class="hidden">
+        <h1>Registrácia</h1>
+        <p class="subtitle">Vytvor si nový účet.</p>
+
+        <div class="form">
+          <div class="field">
+            <label for="firstName">Meno</label>
+            <input id="firstName" class="input" type="text" placeholder="Zadaj meno" />
+          </div>
+
+          <div class="field">
+            <label for="lastName">Priezvisko</label>
+            <input id="lastName" class="input" type="text" placeholder="Zadaj priezvisko" />
+          </div>
+
+          <div class="field">
+            <label for="registerEmail">E-mail</label>
+            <input id="registerEmail" class="input" type="email" placeholder="Zadaj e-mail" />
+          </div>
+
+          <div class="field">
+            <label for="registerPassword">Heslo</label>
+            <input id="registerPassword" class="input" type="password" placeholder="Zadaj heslo" />
+          </div>
+
+          <div class="field">
+            <label for="confirmPassword">Potvrdenie hesla</label>
+            <input id="confirmPassword" class="input" type="password" placeholder="Potvrď heslo" />
+          </div>
+
+          <div class="captcha">Captcha overenie<br>miesto pripravené na napojenie</div>
+
+          <div class="notice" id="registerNotice"></div>
+          <div class="error" id="registerError"></div>
+
+          <button class="btn btn-primary" id="registerBtn" type="button">Registrovať sa</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const SUPABASE_URL = "DOPLN_SUPABASE_URL";
     const SUPABASE_ANON_KEY = "DOPLN_SUPABASE_ANON_KEY";
-    const TABLE_NAME = "guest_signups";
+    const REDIRECT_AFTER_AUTH = "/profil/";
 
-    const slug = new URLSearchParams(window.location.search).get("turnaj") || "default";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const el = {
-      playerName: document.getElementById("playerName"),
-      joinBtn: document.getElementById("joinBtn"),
-      clearBtn: document.getElementById("clearBtn"),
-      playersBox: document.getElementById("playersBox"),
-      noticeBox: document.getElementById("noticeBox"),
-      errorBox: document.getElementById("errorBox")
-    };
+    const loginTab = document.getElementById("loginTab");
+    const registerTab = document.getElementById("registerTab");
+    const loginView = document.getElementById("loginView");
+    const registerView = document.getElementById("registerView");
 
-    function normalizeName(value){ return value.trim().replace(/\s+/g, " "); }
-    function normalizeCompare(value){
-      return normalizeName(value).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    function showLogin(){
+      loginTab.classList.add("active");
+      registerTab.classList.remove("active");
+      loginView.classList.remove("hidden");
+      registerView.classList.add("hidden");
     }
 
-    function showNotice(text){
-      el.noticeBox.style.display = "block";
-      el.noticeBox.textContent = text;
-      el.errorBox.style.display = "none";
-      el.errorBox.textContent = "";
+    function showRegister(){
+      registerTab.classList.add("active");
+      loginTab.classList.remove("active");
+      registerView.classList.remove("hidden");
+      loginView.classList.add("hidden");
     }
 
-    function showError(text){
-      el.errorBox.style.display = "block";
-      el.errorBox.textContent = text;
-      el.noticeBox.style.display = "none";
-      el.noticeBox.textContent = "";
+    loginTab.addEventListener("click", showLogin);
+    registerTab.addEventListener("click", showRegister);
+
+    function showBox(id, text){
+      const box = document.getElementById(id);
+      box.textContent = text;
+      box.style.display = "block";
     }
 
-    function clearMessages(){
-      el.noticeBox.style.display = "none";
-      el.noticeBox.textContent = "";
-      el.errorBox.style.display = "none";
-      el.errorBox.textContent = "";
+    function hideBox(id){
+      const box = document.getElementById(id);
+      box.textContent = "";
+      box.style.display = "none";
     }
 
-    function renderPlayers(players){
-      if(!players.length){
-        el.playersBox.innerHTML = '<span class="empty-text">Zatiaľ nie je prihlásený žiadny hráč.</span>';
+    function clearLoginBoxes(){
+      hideBox("loginNotice");
+      hideBox("loginError");
+    }
+
+    function clearRegisterBoxes(){
+      hideBox("registerNotice");
+      hideBox("registerError");
+    }
+
+    function goToProfile(){
+      window.location.href = REDIRECT_AFTER_AUTH;
+    }
+
+    async function checkSessionAndRedirect(){
+      const { data } = await supabaseClient.auth.getSession();
+      if (data && data.session) goToProfile();
+    }
+
+    async function signInEmail(){
+      clearLoginBoxes();
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+
+      if(!email || !password){
+        showBox("loginError", "Vyplň e-mail a heslo.");
         return;
       }
-      el.playersBox.textContent = players.map(p => p.display_name).join("\n");
-    }
 
-    async function loadPlayers(){
-      const { data, error } = await supabaseClient
-        .from(TABLE_NAME)
-        .select("display_name, created_at")
-        .eq("tournament_slug", slug)
-        .order("created_at", { ascending: true });
-
-      if(error){
-        showError("Nepodarilo sa načítať zoznam hráčov.");
-        el.playersBox.innerHTML = '<span class="empty-text">Zoznam sa nepodarilo načítať.</span>';
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) {
+        showBox("loginError", error.message || "Prihlásenie sa nepodarilo.");
         return;
       }
-      renderPlayers(data || []);
+      goToProfile();
     }
 
-    async function addPlayer(){
-      clearMessages();
+    async function signUpEmail(){
+      clearRegisterBoxes();
+      const firstName = document.getElementById("firstName").value.trim();
+      const lastName = document.getElementById("lastName").value.trim();
+      const email = document.getElementById("registerEmail").value.trim();
+      const password = document.getElementById("registerPassword").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
 
-      const cleanName = normalizeName(el.playerName.value);
-      const normalizedName = normalizeCompare(cleanName);
+      if(!firstName || !lastName || !email || !password || !confirmPassword){
+        showBox("registerError", "Vyplň všetky polia.");
+        return;
+      }
 
-      if(!cleanName){ showError("Zadaj meno alebo prezývku."); return; }
-      if(cleanName.length < 2){ showError("Meno je príliš krátke."); return; }
+      if(password !== confirmPassword){
+        showBox("registerError", "Heslá sa nezhodujú.");
+        return;
+      }
 
-      const { error } = await supabaseClient
-        .from(TABLE_NAME)
-        .insert({
-          tournament_slug: slug,
-          display_name: cleanName,
-          normalized_name: normalizedName
-        });
-
-      if(error){
-        if(String(error.message || "").toLowerCase().includes("duplicate") || String(error.code) === "23505"){
-          showError("Tento hráč je už prihlásený.");
-          return;
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName
+          }
         }
-        showError("Prihlásenie sa nepodarilo.");
+      });
+
+      if (error) {
+        showBox("registerError", error.message || "Registrácia sa nepodarila.");
         return;
       }
 
-      el.playerName.value = "";
-      el.playerName.focus();
-      showNotice("Hráč bol prihlásený.");
-      await loadPlayers();
+      if (data.session) {
+        goToProfile();
+        return;
+      }
+
+      showBox("registerNotice", "Registrácia prebehla. Dokonči overenie e-mailu.");
     }
 
-    el.joinBtn.addEventListener("click", addPlayer);
-    el.clearBtn.addEventListener("click", () => {
-      el.playerName.value = "";
-      el.playerName.focus();
-      clearMessages();
-    });
+    async function signInGoogle(){
+      await supabaseClient.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin + REDIRECT_AFTER_AUTH }
+      });
+    }
 
-    el.playerName.addEventListener("keydown", (e) => {
-      if(e.key === "Enter"){
-        e.preventDefault();
-        addPlayer();
-      }
-    });
+    async function signInFacebook(){
+      await supabaseClient.auth.signInWithOAuth({
+        provider: "facebook",
+        options: { redirectTo: window.location.origin + REDIRECT_AFTER_AUTH }
+      });
+    }
 
-    loadPlayers();
+    async function signInApple(){
+      await supabaseClient.auth.signInWithOAuth({
+        provider: "apple",
+        options: { redirectTo: window.location.origin + REDIRECT_AFTER_AUTH }
+      });
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", signInEmail);
+    document.getElementById("registerBtn").addEventListener("click", signUpEmail);
+    document.getElementById("googleBtn").addEventListener("click", signInGoogle);
+    document.getElementById("facebookBtn").addEventListener("click", signInFacebook);
+    document.getElementById("appleBtn").addEventListener("click", signInApple);
+
+    checkSessionAndRedirect();
   </script>
 </body>
 </html>
