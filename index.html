@@ -108,6 +108,34 @@ button,input,select{font:inherit}
   color:var(--gold);
 }
 
+
+.lang-select-wrap{
+  min-height:42px;
+  padding:0 14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:rgba(255,255,255,.02);
+}
+.lang-globe{
+  display:inline-flex;
+  align-items:center;
+  font-size:1rem;
+}
+.lang-select{
+  background:transparent;
+  border:none;
+  color:var(--text);
+  font-weight:800;
+  outline:none;
+}
+.lang-select option{
+  background:#111;
+  color:#fff;
+}
+
 .hero{
   padding:24px;
   display:grid;
@@ -248,7 +276,7 @@ button,input,select{font:inherit}
 }
 .grid-4{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(5,1fr);
   gap:14px;
 }
 .mini-stat{
@@ -500,11 +528,16 @@ button,input,select{font:inherit}
     </nav>
 
     <div class="lang">
-      <a href="#">SK</a>
-      <a href="#">CZ</a>
-      <a href="#">ENG</a>
-      <a href="#">DE</a>
-      <a href="#">PL</a>
+      <div class="lang-select-wrap">
+        <span class="lang-globe" aria-hidden="true">🌐</span>
+        <select class="lang-select" aria-label="Jazyk">
+          <option selected>Slovenčina</option>
+          <option>Čeština</option>
+          <option>English</option>
+          <option>Deutsch</option>
+          <option>Polski</option>
+        </select>
+      </div>
     </div>
   </div>
 </header>
@@ -528,30 +561,60 @@ button,input,select{font:inherit}
 
   <div class="hero-preview">
     <div class="preview-card">
-      <h3>Profil hráča</h3>
-      <p>Aktuálne hrané turnaje, história, výsledky a tréning na jednom mieste.</p>
-      <div class="mini-actions">
-        <span class="chip">Profil</span>
-        <span class="chip">História</span>
+      <div class="section-head">
+        <div>
+          <h3>Kalendár turnajov</h3>
+          <p>Vyhľadávanie má byť hlavný tromf tejto sekcie pre hráča aj klub.</p>
+        </div>
+        <a href="/search/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Zobraziť všetky turnaje</a>
       </div>
-    </div>
 
-    <div class="preview-card">
-      <h3>Priebeh turnaja</h3>
-      <p>Zoznam zápasov, pavúk a pohodlný zápis výsledkov počas turnaja.</p>
-      <div class="mini-actions">
-        <span class="chip">Single KO</span>
-        <span class="chip">Double KO</span>
-        <span class="chip">Skupiny</span>
-      </div>
-    </div>
+      <div class="search-panel" style="padding:0;border:none;background:transparent;">
+        <h3>Vyhľadávanie udalostí</h3>
 
-    <div class="preview-card">
-      <h3>Vyhľadávanie udalostí</h3>
-      <p>Rýchly prehľad turnajov podľa športu, mesta, dátumu alebo organizátora.</p>
-      <div class="mini-actions">
-        <span class="chip">Search engine</span>
-        <span class="chip">Filter</span>
+        <input class="search-field" type="text" placeholder="Hľadať turnaj, mesto, klub..." />
+
+        <div class="calendar-tabs">
+          <button class="tab-btn active" type="button">Všetky mestá</button>
+          <button class="tab-btn" type="button">Šípky</button>
+          <button class="tab-btn" type="button">Biliard</button>
+          <button class="tab-btn" type="button">Bowling</button>
+          <button class="tab-btn" type="button">Karty</button>
+        </div>
+
+        <button class="btn btn-green" type="button">Hľadať</button>
+
+        <div class="search-result-note">
+          Kluby môžu pridať svoju udalosť do kalendára aj bez vlastného webu.
+        </div>
+
+        <div class="calendar-grid">
+          <div class="event-card">
+            <div class="event-top">
+              <h4>Moment Darts Open</h4>
+              <span class="badge">Šípky</span>
+            </div>
+            <div class="event-meta">
+              <div>Kanianka • 18. 05. 2026 • 18:00</div>
+            </div>
+            <div class="mini-actions">
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
+            </div>
+          </div>
+
+          <div class="event-card">
+            <div class="event-top">
+              <h4>Večerná 501 Liga</h4>
+              <span class="badge">Šípky</span>
+            </div>
+            <div class="event-meta">
+              <div>Prievidza • 22. 05. 2026 • 19:00</div>
+            </div>
+            <div class="mini-actions">
+              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -585,212 +648,9 @@ button,input,select{font:inherit}
   </div>
 </section>
 
-<section class="panel section">
-  <div class="section-head">
-    <div>
-      <h2 class="section-title">Preview systému</h2>
-      <p>Ukážka hlavných blokov, ktoré tvoria základ aplikácie.</p>
-    </div>
-  </div>
 
-  <div class="grid-4">
-    <div class="feature-card">
-      <h3>Profil používateľa</h3>
-      <p>Hráčska identita, výsledky, aktívne turnaje a história.</p>
-      <div class="mini-stat">Osobný prehľad hráča</div>
-    </div>
 
-    <div class="feature-card">
-      <h3>Nastavenie turnaja</h3>
-      <p>Výber športu, disciplíny, štruktúry, veľkosti poľa a seedovania.</p>
-      <div class="mini-stat">Príprava pred štartom</div>
-    </div>
 
-    <div class="feature-card">
-      <h3>Priebeh turnaja</h3>
-      <p>Zápasy, live stav, pavúk a priebežný zápis výsledkov.</p>
-      <div class="mini-stat">Prehľad turnaja v reálnom čase</div>
-    </div>
-
-    <div class="feature-card">
-      <h3>Tréning</h3>
-      <p>Samostatné režimy tréningu podľa športu s dôrazom na jednoduché ovládanie.</p>
-      <div class="mini-stat">Tréningové režimy</div>
-    </div>
-  </div>
-</section>
-
-<section class="panel section">
-  <div class="section-head">
-    <div>
-      <h2 class="section-title">Kalendár turnajov</h2>
-      <p>Vyhľadávanie má byť hlavný tromf tejto sekcie pre hráča aj klub.</p>
-    </div>
-    <a href="/search/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Zobraziť všetky turnaje</a>
-  </div>
-
-  <div class="search-layout">
-    <div class="search-panel">
-      <h3>Vyhľadávanie udalostí</h3>
-      <p>Vyhľadaj udalosť podľa názvu, mesta alebo organizátora.</p>
-
-      <input id="searchInput" class="search-field" type="text" placeholder="Hľadať turnaj, mesto, klub..." />
-
-      <select id="cityFilter" class="search-select">
-        <option value="all">Všetky mestá</option>
-        <option value="kanianka">Kanianka</option>
-        <option value="prievidza">Prievidza</option>
-        <option value="topolcany">Topoľčany</option>
-        <option value="zilina">Žilina</option>
-        <option value="trencin">Trenčín</option>
-        <option value="bojnice">Bojnice</option>
-      </select>
-
-      <div class="calendar-tabs">
-        <button class="tab-btn active" data-view="sipky">Šípky</button>
-        <button class="tab-btn" data-view="biliard">Biliard</button>
-        <button class="tab-btn" data-view="bowling">Bowling</button>
-        <button class="tab-btn" data-view="karty">Karty</button>
-      </div>
-
-      <button class="btn btn-green" id="searchBtn">Hľadať</button>
-
-      <div class="search-result-note">
-        Kluby môžu pridať svoju udalosť do kalendára aj bez vlastného webu.
-      </div>
-    </div>
-
-    <div>
-      <div class="view active" id="view-sipky">
-        <div class="calendar-grid">
-          <div class="event-card" data-city="kanianka" data-search="moment darts open kanianka moment club sipky">
-            <div class="event-top">
-              <h4>Moment Darts Open</h4>
-              <span class="badge">Šípky</span>
-            </div>
-            <div class="event-meta">
-              <div>Kanianka • 18. 05. 2026 • 18:00</div>
-              <div>Organizátor: Moment Club</div>
-            </div>
-            <div class="mini-actions">
-              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
-            </div>
-          </div>
-
-          <div class="event-card" data-city="prievidza" data-search="vecerna 501 liga prievidza klub darts sipky">
-            <div class="event-top">
-              <h4>Večerná 501 Liga</h4>
-              <span class="badge">Šípky</span>
-            </div>
-            <div class="event-meta">
-              <div>Prievidza • 22. 05. 2026 • 19:00</div>
-              <div>Organizátor: Klub Darts</div>
-            </div>
-            <div class="mini-actions">
-              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="view" id="view-biliard">
-        <div class="calendar-grid">
-          <div class="event-card" data-city="kanianka" data-search="tour de pool kanianka moment club biliard 8-ball">
-            <div class="event-top">
-              <h4>Tour de Pool</h4>
-              <span class="badge">Biliard</span>
-            </div>
-            <div class="event-meta">
-              <div>Kanianka • 20. 05. 2026 • 17:00</div>
-              <div>Disciplína: 8-Ball</div>
-            </div>
-            <div class="mini-actions">
-              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
-            </div>
-          </div>
-
-          <div class="event-card" data-city="topolcany" data-search="9-ball night topolcany biliard 9-ball">
-            <div class="event-top">
-              <h4>9-Ball Night</h4>
-              <span class="badge">Biliard</span>
-            </div>
-            <div class="event-meta">
-              <div>Topoľčany • 25. 05. 2026 • 18:30</div>
-              <div>Disciplína: 9-Ball</div>
-            </div>
-            <div class="mini-actions">
-              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="view" id="view-bowling">
-        <div class="calendar-grid">
-          <div class="event-card" data-city="zilina" data-search="bowling friday cup zilina bowling hall">
-            <div class="event-top">
-              <h4>Bowling Friday Cup</h4>
-              <span class="badge">Bowling</span>
-            </div>
-            <div class="event-meta">
-              <div>Žilina • 24. 05. 2026 • 18:00</div>
-              <div>Organizátor: Bowling Hall</div>
-            </div>
-            <div class="mini-actions">
-              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
-            </div>
-          </div>
-
-          <div class="event-card" data-city="trencin" data-search="nocna seria trencin arena bowling">
-            <div class="event-top">
-              <h4>Nočná séria</h4>
-              <span class="badge">Bowling</span>
-            </div>
-            <div class="event-meta">
-              <div>Trenčín • 29. 05. 2026 • 20:00</div>
-              <div>Organizátor: Arena Bowling</div>
-            </div>
-            <div class="mini-actions">
-              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="view" id="view-karty">
-        <div class="calendar-grid">
-          <div class="event-card" data-city="bojnice" data-search="zolikovy vecer bojnice klub kariet karty">
-            <div class="event-top">
-              <h4>Žolíkový večer</h4>
-              <span class="badge">Karty</span>
-            </div>
-            <div class="event-meta">
-              <div>Bojnice • 19. 05. 2026 • 17:30</div>
-              <div>Organizátor: Klub kariet</div>
-            </div>
-            <div class="mini-actions">
-              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
-            </div>
-          </div>
-
-          <div class="event-card" data-city="prievidza" data-search="marias open prievidza lokalny podnik karty">
-            <div class="event-top">
-              <h4>Mariáš Open</h4>
-              <span class="badge">Karty</span>
-            </div>
-            <div class="event-meta">
-              <div>Prievidza • 27. 05. 2026 • 18:00</div>
-              <div>Organizátor: Lokálny podnik</div>
-            </div>
-            <div class="mini-actions">
-              <a href="/login/" class="btn btn-dark" style="display:inline-flex;align-items:center;">Detail udalosti</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="panel section">
   <div class="section-head">
