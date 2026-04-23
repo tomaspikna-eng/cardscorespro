@@ -15,26 +15,14 @@
       min-height:100vh;
       font-family:Inter,Arial,Helvetica,sans-serif;
       color:var(--text);
-      background:
-        radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 24%),
-        linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
-      display:grid;
-      place-items:center;
-      padding:24px 16px;
+      background:radial-gradient(circle at top center, rgba(216,176,75,.08), transparent 24%), linear-gradient(180deg,var(--bg2) 0%,var(--bg) 100%);
+      display:grid; place-items:center; padding:24px 16px;
     }
     button,input{font:inherit}
     .shell{width:min(520px,100%);display:grid;gap:18px}
-    .panel{
-      border:1px solid var(--line);
-      border-radius:28px;
-      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));
-      box-shadow:var(--shadow);
-    }
+    .panel{border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));box-shadow:var(--shadow)}
     .brand{padding:18px;display:flex;justify-content:center;align-items:center;gap:14px}
-    .brand-mark{
-      width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);
-      background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em;
-    }
+    .brand-mark{width:54px;height:54px;border-radius:16px;border:1px solid rgba(216,176,75,.34);background:rgba(216,176,75,.06);display:grid;place-items:center;color:var(--gold);font-weight:900;letter-spacing:.04em}
     .brand-title{font-size:1.35rem;font-weight:900;letter-spacing:-.04em}
     .brand-title .gold{color:var(--gold)} .brand-title .white{color:#fff}
     .card{padding:22px;display:grid;gap:18px}
@@ -47,25 +35,14 @@
     .form{display:grid;gap:12px}
     .field{display:grid;gap:8px}
     .field label{color:#ddd;font-size:.9rem;font-weight:800}
-    .input{
-      width:100%;min-height:52px;padding:0 14px;border-radius:14px;border:1px solid var(--line);
-      background:rgba(255,255,255,.03);color:var(--text);outline:none;
-    }
+    .input{width:100%;min-height:52px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);outline:none}
     .input::placeholder{color:#888}
-    .captcha{
-      min-height:74px;border-radius:18px;border:1px dashed rgba(216,176,75,.22);background:rgba(216,176,75,.05);
-      display:grid;place-items:center;text-align:center;color:#ead7a2;padding:14px;font-size:.94rem;line-height:1.45;
-    }
+    .captcha{min-height:74px;border-radius:18px;border:1px dashed rgba(216,176,75,.22);background:rgba(216,176,75,.05);display:grid;place-items:center;text-align:center;color:#ead7a2;padding:14px;font-size:.94rem;line-height:1.45}
     .btn{min-height:52px;border:none;border-radius:16px;font-weight:900;cursor:pointer}
     .btn-primary{background:var(--green);color:#06230f}
     .socials{display:grid;gap:10px}
-    .social-btn{
-      min-height:50px;border-radius:16px;border:1px solid var(--line);
-      background:rgba(255,255,255,.03);color:var(--text);font-weight:900;cursor:pointer;
-    }
-    .notice,.error{
-      display:none;padding:12px 14px;border-radius:14px;font-size:.92rem;line-height:1.5;text-align:center;
-    }
+    .social-btn{min-height:50px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);font-weight:900;cursor:pointer}
+    .notice,.error{display:none;padding:12px 14px;border-radius:14px;font-size:.92rem;line-height:1.5;text-align:center}
     .notice{background:rgba(34,211,107,.10);border:1px solid rgba(34,211,107,.18);color:#d8ffe6}
     .error{background:rgba(200,87,87,.12);border:1px solid rgba(200,87,87,.18);color:#ffd6d6}
     .muted-link{text-align:center;color:var(--muted);font-size:.9rem}
@@ -108,9 +85,9 @@
           <button class="btn btn-primary" id="loginBtn" type="button">Prihlásiť sa</button>
 
           <div class="socials">
-            <button class="social-btn" id="googleBtn" type="button">Pokračovať cez Google</button>
-            <button class="social-btn" id="facebookBtn" type="button">Pokračovať cez Facebook</button>
-            <button class="social-btn" id="appleBtn" type="button">Pokračovať cez Apple</button>
+            <button class="social-btn" type="button">Pokračovať cez Google</button>
+            <button class="social-btn" type="button">Pokračovať cez Apple</button>
+            <button class="social-btn" type="button">Pokračovať cez Facebook</button>
           </div>
 
           <div class="muted-link">Zabudnuté heslo</div>
@@ -153,19 +130,18 @@
           <div class="error" id="registerError"></div>
 
           <button class="btn btn-primary" id="registerBtn" type="button">Registrovať sa</button>
+
+          <div class="socials">
+            <button class="social-btn" type="button">Pokračovať cez Google</button>
+            <button class="social-btn" type="button">Pokračovať cez Apple</button>
+            <button class="social-btn" type="button">Pokračovať cez Facebook</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "DOPLN_SUPABASE_URL";
-    const SUPABASE_ANON_KEY = "DOPLN_SUPABASE_ANON_KEY";
-    const REDIRECT_AFTER_AUTH = "/profil/";
-
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     const loginTab = document.getElementById("loginTab");
     const registerTab = document.getElementById("registerTab");
     const loginView = document.getElementById("loginView");
@@ -200,45 +176,21 @@
       box.style.display = "none";
     }
 
-    function clearLoginBoxes(){
+    document.getElementById("loginBtn").addEventListener("click", () => {
       hideBox("loginNotice");
       hideBox("loginError");
-    }
-
-    function clearRegisterBoxes(){
-      hideBox("registerNotice");
-      hideBox("registerError");
-    }
-
-    function goToProfile(){
-      window.location.href = REDIRECT_AFTER_AUTH;
-    }
-
-    async function checkSessionAndRedirect(){
-      const { data } = await supabaseClient.auth.getSession();
-      if (data && data.session) goToProfile();
-    }
-
-    async function signInEmail(){
-      clearLoginBoxes();
       const email = document.getElementById("loginEmail").value.trim();
       const password = document.getElementById("loginPassword").value.trim();
-
       if(!email || !password){
         showBox("loginError", "Vyplň e-mail a heslo.");
         return;
       }
+      showBox("loginNotice", "Frontend je pripravený. Prihlásenie sa napojí neskôr.");
+    });
 
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      if (error) {
-        showBox("loginError", error.message || "Prihlásenie sa nepodarilo.");
-        return;
-      }
-      goToProfile();
-    }
-
-    async function signUpEmail(){
-      clearRegisterBoxes();
+    document.getElementById("registerBtn").addEventListener("click", () => {
+      hideBox("registerNotice");
+      hideBox("registerError");
       const firstName = document.getElementById("firstName").value.trim();
       const lastName = document.getElementById("lastName").value.trim();
       const email = document.getElementById("registerEmail").value.trim();
@@ -249,64 +201,12 @@
         showBox("registerError", "Vyplň všetky polia.");
         return;
       }
-
       if(password !== confirmPassword){
         showBox("registerError", "Heslá sa nezhodujú.");
         return;
       }
-
-      const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName
-          }
-        }
-      });
-
-      if (error) {
-        showBox("registerError", error.message || "Registrácia sa nepodarila.");
-        return;
-      }
-
-      if (data.session) {
-        goToProfile();
-        return;
-      }
-
-      showBox("registerNotice", "Registrácia prebehla. Dokonči overenie e-mailu.");
-    }
-
-    async function signInGoogle(){
-      await supabaseClient.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: window.location.origin + REDIRECT_AFTER_AUTH }
-      });
-    }
-
-    async function signInFacebook(){
-      await supabaseClient.auth.signInWithOAuth({
-        provider: "facebook",
-        options: { redirectTo: window.location.origin + REDIRECT_AFTER_AUTH }
-      });
-    }
-
-    async function signInApple(){
-      await supabaseClient.auth.signInWithOAuth({
-        provider: "apple",
-        options: { redirectTo: window.location.origin + REDIRECT_AFTER_AUTH }
-      });
-    }
-
-    document.getElementById("loginBtn").addEventListener("click", signInEmail);
-    document.getElementById("registerBtn").addEventListener("click", signUpEmail);
-    document.getElementById("googleBtn").addEventListener("click", signInGoogle);
-    document.getElementById("facebookBtn").addEventListener("click", signInFacebook);
-    document.getElementById("appleBtn").addEventListener("click", signInApple);
-
-    checkSessionAndRedirect();
+      showBox("registerNotice", "Frontend je pripravený. Registrácia sa napojí neskôr.");
+    });
   </script>
 </body>
 </html>
