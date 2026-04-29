@@ -204,8 +204,8 @@ body{
 </div>
 
 <script>
-const SUPABASE_URL = "DOPLN_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "DOPLN_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://ierliswrgrtltrrvlqsz.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imllcmxpc3dyZ3J0bHRycnZscXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDE3MjQsImV4cCI6MjA5Mjc3NzcyNH0.Y2dH1MkSUxhnKGl_5vnebZAgaBBcfrNQFJk6PONNJMU";
 const PROGRESSION_FILE = "priebeh_turnaja_db_fix_v3.html";
 
 const supabaseClient = (window.supabase && SUPABASE_URL !== "DOPLN_SUPABASE_URL" && SUPABASE_ANON_KEY !== "DOPLN_SUPABASE_ANON_KEY")
@@ -663,6 +663,13 @@ function buildRoundRobinMatches(playersRows){
 }
 
 async function startTournamentDb(){
+  // Skontroluj plan
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(!session){ showError(el.rightError,"Musíš byť prihlásený."); return; }
+  const { data: profile } = await supabaseClient.from('profiles').select('plan').eq('id', session.user.id).single();
+  if(!profile || !['pro','ultra','admin'].includes(profile.plan)){
+    showError(el.rightError,"Vytváranie turnajov je dostupné len pre Pro a Ultra plán."); return;
+  }
   hideBox(el.rightNotice); hideBox(el.rightError);
   if(!supabaseClient){ showError(el.rightError,"Doplň SUPABASE_URL a SUPABASE_ANON_KEY."); return; }
   if(!el.tournamentName.value.trim() || !el.location.value.trim() || !el.date.value || !el.time.value){
@@ -685,7 +692,8 @@ async function startTournamentDb(){
         location: el.location.value.trim(),
         event_date: el.date.value,
         event_time: el.time.value,
-        status: "active"
+        status: "active",
+        organizer_id: session.user.id
       })
       .select()
       .single();
