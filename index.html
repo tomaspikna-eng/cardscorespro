@@ -511,6 +511,7 @@ button,input,select{font:inherit}
   .topbar{padding:14px}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 <div class="page">
@@ -529,8 +530,9 @@ button,input,select{font:inherit}
       <a href="/login/">Bowling</a>
       <a href="/login/">Karty</a>
       <a href="/search/" class="search-btn">Hľadať</a>
-      <a href="/login/">Prihlásiť</a>
-      <a href="/login/" class="primary">Registrovať</a>
+      <a href="/login/" id="navLogin">Prihlásiť</a>
+      <a href="/login/" class="primary" id="navRegister">Registrovať</a>
+      <a href="/profil/" id="navProfil" style="display:none">👤 <span id="navMeno">Profil</span></a>
     </nav>
 
     <div class="lang">
@@ -781,6 +783,23 @@ tabButtons.forEach(btn => {
 searchBtn.addEventListener("click", runSearch);
 searchInput.addEventListener("input", runSearch);
 cityFilter.addEventListener("change", runSearch);
+</script>
+<script>
+(async function() {
+  const SB = supabase.createClient(
+    'https://ierliswrgrtltrrvlqsz.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imllcmxpc3dyZ3J0bHRycnZscXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDE3MjQsImV4cCI6MjA5Mjc3NzcyNH0.Y2dH1MkSUxhnKGl_5vnebZAgaBBcfrNQFJk6PONNJMU'
+  );
+  const { data: { session } } = await SB.auth.getSession();
+  if(session) {
+    const { data: profile } = await SB.from('profiles').select('full_name').eq('id', session.user.id).single();
+    const meno = (profile && profile.full_name) ? profile.full_name.split(' ')[0] : session.user.email.split('@')[0];
+    document.getElementById('navLogin').style.display = 'none';
+    document.getElementById('navRegister').style.display = 'none';
+    document.getElementById('navProfil').style.display = 'inline-flex';
+    document.getElementById('navMeno').textContent = meno;
+  }
+})();
 </script>
 </body>
 </html>
