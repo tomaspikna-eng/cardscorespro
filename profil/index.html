@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>CSP – Profil používateľa</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 :root{--bg:#050505;--bg2:#0b0b0b;--line:rgba(255,255,255,.08);--line-soft:rgba(255,255,255,.05);--text:#f4f4f4;--muted:#a7a7a7;--gold:#d8b04b;--green:#22d36b;--blue:#6ea8ff;--shadow:0 20px 60px rgba(0,0,0,.34)}
 *{box-sizing:border-box}html,body{margin:0;padding:0}
@@ -75,9 +76,9 @@ tbody tr:hover{background:rgba(255,255,255,.02)}
       </div>
     </div>
     <div>
-      <h1 class="name" style="margin:0 0 4px">Tomáš Pikna</h1>
+      <h1 class="name" id="profileName" style="margin:0 0 4px">Načítavam...</h1>
       <div id="planPill" style="display:inline-flex;align-items:center;padding:3px 14px;border-radius:999px;font-size:.74rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--muted);margin-bottom:6px">Free</div>
-      <p class="sub" style="margin:0">Kanianka • Slovensko</p>
+      <p class="sub" id="profileSub" style="margin:0">–</p>
       <div class="tag-row" style="margin-top:6px">
         <span class="tag">Biliard</span>
         <span class="tag">8-Ball</span>
@@ -145,21 +146,86 @@ tbody tr:hover{background:rgba(255,255,255,.02)}
 </div>
 
 <script>
-function handlePhotoUpload(event) {
+const SB = supabase.createClient(
+  'https://ierliswrgrtltrrvlqsz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imllcmxpc3dyZ3J0bHRycnZscXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDE3MjQsImV4cCI6MjA5Mjc3NzcyNH0.Y2dH1MkSUxhnKGl_5vnebZAgaBBcfrNQFJk6PONNJMU'
+);
+
+async function loadProfile() {
+  const { data: { session } } = await SB.auth.getSession();
+  if(!session) { window.location.href = '/login/'; return; }
+
+  const user = session.user;
+  const { data: profile } = await SB.from('profiles').select('*').eq('id', user.id).single();
+
+  if(profile) {
+    const name = profile.full_name || user.email;
+    const city = profile.city || '';
+    const country = profile.country || 'SK';
+    const plan = profile.plan || 'free';
+
+    // Meno a sub
+    document.getElementById('profileName').textContent = name;
+    document.getElementById('profileSub').textContent = [city, country].filter(Boolean).join(' • ');
+
+    // Plan pill
+    const pill = document.getElementById('planPill');
+    pill.textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
+    const planColors = {
+      free: 'background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--muted)',
+      pro: 'background:rgba(34,211,107,.12);border:1px solid rgba(34,211,107,.3);color:var(--green)',
+      ultra: 'background:rgba(216,176,75,.12);border:1px solid rgba(216,176,75,.3);color:var(--gold)',
+      admin: 'background:rgba(110,168,255,.12);border:1px solid rgba(110,168,255,.3);color:var(--blue)'
+    };
+    pill.style.cssText = pill.style.cssText + ';' + (planColors[plan] || planColors.free);
+
+    // Avatar
+    if(profile.avatar_url) {
+      document.getElementById('avatarImg').src = profile.avatar_url;
+    }
+
+    // CTA podľa plánu
+    const isPaid = ['pro','ultra','admin'].includes(plan);
+    const btnT = document.getElementById('btnTurnaj');
+    const btnU = document.getElementById('btnUdalost');
+    const lockNote = document.getElementById('lockNote');
+    if(isPaid) {
+      btnT.style.opacity = '1'; btnT.style.pointerEvents = 'auto';
+      btnU.style.opacity = '1'; btnU.style.pointerEvents = 'auto';
+      if(lockNote) lockNote.style.display = 'none';
+    }
+  }
+}
+
+async function handlePhotoUpload(event) {
   const file = event.target.files[0];
   if(!file) return;
   const allowed = ['image/jpeg','image/png','image/webp'];
-  if(!allowed.includes(file.type)){ alert('Povolené formáty: JPG, PNG, WebP'); return; }
-  if(file.size > 2*1024*1024){ alert('Fotka musí byť menšia ako 2 MB.'); return; }
+  if(!allowed.includes(file.type)) { alert('Povolené formáty: JPG, PNG, WebP'); return; }
+  if(file.size > 2*1024*1024) { alert('Fotka musí byť menšia ako 2 MB.'); return; }
+
   const img = new Image();
-  const url = URL.createObjectURL(file);
-  img.onload = function(){
-    if(img.width < 200 || img.height < 200){ alert('Min. rozlíšenie: 200×200 px.'); return; }
-    document.getElementById('avatarImg').src = url;
-    // Tu sa uloží do Supabase po napojení
+  const localUrl = URL.createObjectURL(file);
+  img.onload = async function() {
+    if(img.width < 200 || img.height < 200) { alert('Min. rozlíšenie: 200×200 px.'); return; }
+
+    // Zobraz okamžite
+    document.getElementById('avatarImg').src = localUrl;
+
+    // Ulož do Supabase Storage
+    const { data: { session } } = await SB.auth.getSession();
+    if(!session) return;
+    const ext = file.name.split('.').pop();
+    const path = `avatars/${session.user.id}.${ext}`;
+    const { error: uploadErr } = await SB.storage.from('avatars').upload(path, file, {upsert: true});
+    if(uploadErr) { console.error(uploadErr); return; }
+    const { data } = SB.storage.from('avatars').getPublicUrl(path);
+    await SB.from('profiles').update({avatar_url: data.publicUrl}).eq('id', session.user.id);
   };
-  img.src = url;
+  img.src = localUrl;
 }
+
+loadProfile();
 </script>
 </body>
 </html>
