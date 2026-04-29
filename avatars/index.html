@@ -2,7 +2,8 @@
 <html lang="sk">
 <head>
 <meta charset="UTF-8"/>
-<title>CSP Avatar Export</title>
+<title>CSP – Vybrať avatar</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 body{background:#050505;color:#f4f4f4;font-family:'Barlow',sans-serif;padding:24px}
 h1{color:#d8b04b;margin-bottom:6px}
@@ -11,6 +12,9 @@ p{color:#a7a7a7;margin-bottom:20px}
 .av{text-align:center;cursor:pointer;padding:10px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);transition:.15s}
 .av:hover{border-color:rgba(216,176,75,.4);background:rgba(216,176,75,.06)}
 .av svg{width:100px;height:100px}
+.av{cursor:pointer;border:2px solid transparent;border-radius:16px;transition:all .15s}
+.av:hover{border-color:#d8b04b;background:rgba(216,176,75,.08)}
+.av.selected{border-color:#22d36b;background:rgba(34,211,107,.08)}
 .av .name{font-size:.75rem;color:#a7a7a7;margin-top:6px;font-weight:700}
 .av .num{font-size:.65rem;color:#555;margin-top:2px}
 .btn-all{display:block;width:100%;padding:14px;border-radius:14px;border:0;background:#d8b04b;color:#111;font-size:1rem;font-weight:900;cursor:pointer;margin-bottom:12px}
@@ -19,9 +23,9 @@ p{color:#a7a7a7;margin-bottom:20px}
 </style>
 </head>
 <body>
-<h1>CSP Avatar Export</h1>
-<p>Klikni na avatara pre stiahnutie PNG, alebo stiahni všetky naraz.</p>
-<button class="btn-all" onclick="downloadAll()">⬇ Stiahnuť všetkých 29 PNG</button>
+<h1>Vybrať avatar</h1>
+<p>Klikni na avatara ktorý chceš použiť. Uloží sa automaticky do tvojho profilu.</p>
+<a href="/profil/" class="btn-all" style="display:inline-block;text-decoration:none;text-align:center">← Späť na profil</a>
 
 <div class="cat">🎱 Biliard</div>
 <div class="grid" id="biliard"></div>
@@ -201,6 +205,52 @@ function makeSVG(av) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">${av.svg}</svg>`;
 }
 
+
+const SB = supabase.createClient(
+  'https://ierliswrgrtltrrvlqsz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imllcmxpc3dyZ3J0bHRycnZscXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcyMDE3MjQsImV4cCI6MjA5Mjc3NzcyNH0.Y2dH1MkSUxhnKGl_5vnebZAgaBBcfrNQFJk6PONNJMU'
+);
+
+let selectedAv = null;
+
+async function selectAvatar(av, el) {
+  // Vizuálny výber
+  document.querySelectorAll('.av').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedAv = av;
+
+  // Načítaj session
+  const { data: { session } } = await SB.auth.getSession();
+  if(!session) { alert('Musíš byť prihlásený.'); return; }
+
+  // Konvertuj SVG na PNG a nahraj do Supabase
+  const svg = el.querySelector('svg');
+  const svgData = new XMLSerializer().serializeToString(svg);
+  const canvas = document.createElement('canvas');
+  canvas.width = 200; canvas.height = 200;
+  const ctx = canvas.getContext('2d');
+  const img = new Image();
+  const blob = new Blob([svgData], {type: 'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  
+  img.onload = async function() {
+    ctx.drawImage(img, 0, 0, 200, 200);
+    URL.revokeObjectURL(url);
+    canvas.toBlob(async (pngBlob) => {
+      const path = `avatars/${session.user.id}.png`;
+      const { error } = await SB.storage.from('avatars').upload(path, pngBlob, {upsert: true, contentType: 'image/png'});
+      if(error) { alert('Chyba pri ukladaní: ' + error.message); return; }
+      const { data } = SB.storage.from('avatars').getPublicUrl(path);
+      await SB.from('profiles').update({avatar_url: data.publicUrl + '?t=' + Date.now()}).eq('id', session.user.id);
+      
+      // Potvrď a presmeruj
+      const confirmed = confirm('✅ Avatar "' + av.name + '" uložený! Prejsť na profil?');
+      if(confirmed) window.location.href = '/profil/';
+    }, 'image/png');
+  };
+  img.src = url;
+}
+
 function downloadPNG(av) {
   const svgStr = makeSVG(av);
   const blob = new Blob([svgStr], {type:'image/svg+xml'});
@@ -231,7 +281,7 @@ function renderGrid(id, list) {
     const div = document.createElement('div');
     div.className = 'av';
     div.innerHTML = makeSVG(av) + `<div class="name">${av.name}</div><div class="num">${av.id}</div>`;
-    div.onclick = () => downloadPNG(av);
+    div.onclick = () => selectAvatar(av, div);
     grid.appendChild(div);
   });
 }
